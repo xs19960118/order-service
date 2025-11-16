@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/start/src/main/resources/bootstrap.yml">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/start/src/main/resources/bootstrap.yml" />
+              <option name="originalContent" value="spring:&#10;  application:&#10;    name: order-service&#10;  profiles:&#10;    active: dev&#10;&#10;---&#10;# dev 环境配置&#10;spring:&#10;  config:&#10;    activate:&#10;      on-profile: dev&#10;server:&#10;  port: 8080&#10;&#10;---&#10;# prod 环境配置示例&#10;spring:&#10;  config:&#10;    activate:&#10;      on-profile: prod&#10;server:&#10;  port: 8080&#10;" />
+              <option name="updatedContent" value="spring:&#10;  application:&#10;    name: order-service&#10;  profiles:&#10;    active: dev&#10;&#10;---&#10;# dev 环境配置&#10;spring:&#10;  config:&#10;    activate:&#10;      on-profile: dev&#10;server:&#10;  port: 8080&#10;&#10;---&#10;# prod 环境配置示例&#10;spring:&#10;  config:&#10;    activate:&#10;      on-profile: prod&#10;server:&#10;  port: 8080&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

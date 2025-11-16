@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: order-service
+  profiles:
+    active: dev
+server:
+  port: 8080
+
+# 按环境拆分可创建 application-dev.yml / application-prod.yml 后续扩展
+
