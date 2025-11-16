@@ -27,6 +27,9 @@
         <redis.version>6.2.13</redis.version>
         <kafka.version>3.4.0</kafka.version>
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+        <springdoc.version>2.3.0</springdoc.version>
+        <knife4j.version>4.4.0</knife4j.version>
+        <mybatis-plus.version>3.5.5</mybatis-plus.version>
     </properties>
 
     <dependencyManagement>
