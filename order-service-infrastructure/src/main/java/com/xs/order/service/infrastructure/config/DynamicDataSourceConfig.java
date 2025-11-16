@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+import org.springframework.core.env.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,16 +22,11 @@ public class DynamicDataSourceConfig {
     @Value("${spring.datasource.master.username}") private String masterUsername;
     @Value("${spring.datasource.master.password}") private String masterPassword;
     @Value("${spring.datasource.master.driver-class-name}") private String masterDriver;
+    @Value("${spring.datasource.readonly.enabled:true}")
+    private boolean enableSlaves;
 
-    @Value("${spring.datasource.slaves[0].url}") private String slave1Url;
-    @Value("${spring.datasource.slaves[0].username}") private String slave1Username;
-    @Value("${spring.datasource.slaves[0].password}") private String slave1Password;
-    @Value("${spring.datasource.slaves[0].driver-class-name}") private String slave1Driver;
-
-    @Value("${spring.datasource.slaves[1].url}") private String slave2Url;
-    @Value("${spring.datasource.slaves[1].username}") private String slave2Username;
-    @Value("${spring.datasource.slaves[1].password}") private String slave2Password;
-    @Value("${spring.datasource.slaves[1].driver-class-name}") private String slave2Driver;
+    private final Environment env;
+    public DynamicDataSourceConfig(Environment env) { this.env = env; }
 
     @Bean
     @ConditionalOnMissingBean(name = "dataSource")
@@ -38,38 +34,57 @@ public class DynamicDataSourceConfig {
         HikariDataSource master = build(masterUrl, masterUsername, masterPassword, masterDriver);
         Map<Object,Object> targets = new HashMap<>();
         targets.put("master", master);
-        List<String> slaveKeys = new ArrayList<>();
-        addSlave(targets, slaveKeys, "slave-0", slave1Url, slave1Username, slave1Password, slave1Driver);
-        addSlave(targets, slaveKeys, "slave-1", slave2Url, slave2Username, slave2Password, slave2Driver);
+        List<String> slaveKeys = enableSlaves ? loadSlaves(targets) : Collections.emptyList();
         AtomicInteger rr = new AtomicInteger();
-
         AbstractRoutingDataSource routing = new AbstractRoutingDataSource() {
             @Override
             protected Object determineCurrentLookupKey() {
                 DataSourceRole role = DataSourceContextHolder.getRole();
-                if (role == DataSourceRole.SLAVE && !slaveKeys.isEmpty()) {
+                String key;
+                if (role == DataSourceRole.SLAVE && enableSlaves && !slaveKeys.isEmpty()) {
                     int idx = Math.abs(rr.getAndIncrement()) % slaveKeys.size();
-                    return slaveKeys.get(idx);
+                    key = slaveKeys.get(idx);
+                } else {
+                    key = "master";
                 }
-                return "master"; // default master for writes or no slaves
+                if (log.isDebugEnabled()) {
+                    log.debug("[DynamicDS] role={} route={} slaves={} enabled={}", role, key, slaveKeys, enableSlaves);
+                }
+                return key;
             }
         };
         routing.setDefaultTargetDataSource(master);
         routing.setTargetDataSources(new HashMap<>(targets));
         routing.afterPropertiesSet();
-        log.info("Dynamic DataSource initialized: master + {} slaves", slaveKeys.size());
+        log.info("Dynamic DataSource initialized: master + {} slaves {} (enabled={})", slaveKeys.size(), slaveKeys, enableSlaves);
         return routing;
     }
 
-    private void addSlave(Map<Object,Object> targets, List<String> slaveKeys, String key, String url, String user, String pwd, String driver) {
-        try {
-            HikariDataSource ds = build(url, user, pwd, driver);
-            ds.getConnection().close(); // probe
-            targets.put(key, ds);
-            slaveKeys.add(key);
-        } catch (Exception e) {
-            log.warn("Skip slave {} url={} reason={}", key, url, e.getMessage());
+    private List<String> loadSlaves(Map<Object,Object> targets) {
+        List<String> slaveKeys = new ArrayList<>();
+        for (int i = 0; ; i++) {
+            String prefix = "spring.datasource.slaves[" + i + "].";
+            String url = env.getProperty(prefix + "url");
+            if (url == null) break;
+            String user = env.getProperty(prefix + "username", masterUsername);
+            String pwd = env.getProperty(prefix + "password", masterPassword);
+            String driver = env.getProperty(prefix + "driver-class-name", masterDriver);
+            String key = "slave-" + i;
+            try {
+                HikariDataSource ds = build(url, user, pwd, driver);
+                try {
+                    ds.getConnection().close();
+                } catch (Exception probeEx) {
+                    log.warn("Probe on {} returned '{}' (kept)", key, probeEx.getMessage());
+                }
+                targets.put(key, ds);
+                slaveKeys.add(key);
+                log.info("Added slave {} url={}", key, url);
+            } catch (Exception e) {
+                log.warn("Skip slave {} url={} reason={}", key, url, e.getMessage());
+            }
         }
+        return slaveKeys;
     }
 
     private HikariDataSource build(String url, String username, String password, String driver) {

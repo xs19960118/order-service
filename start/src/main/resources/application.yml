@@ -6,30 +6,32 @@ spring:
 
   datasource:
     master:
-      url: jdbc:mysql://localhost:13307/order_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://localhost:13307/order_db?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
       username: root
       password: xsailxma
       driver-class-name: com.mysql.cj.jdbc.Driver
     slaves:
-      - url: jdbc:mysql://localhost:13308/order_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
+      - url: jdbc:mysql://localhost:13308/order_db?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
         username: root
         password: xsailxma
         driver-class-name: com.mysql.cj.jdbc.Driver
-      - url: jdbc:mysql://localhost:13309/order_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
+      - url: jdbc:mysql://localhost:13309/order_db?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
         username: root
         password: xsailxma
         driver-class-name: com.mysql.cj.jdbc.Driver
+    readonly:
+      enabled: false
   data:
     redis:
       cluster:
         nodes:
-          - localhost:7001
-          - localhost:7002
-          - localhost:7003
-          - localhost:7004
-          - localhost:7005
-          - localhost:7006
-        max-redirects: 3
+          - 192.168.1.133:7001
+          - 192.168.1.133:7002
+          - 192.168.1.133:7003
+          - 192.168.1.133:7004
+          - 192.168.1.133:7005
+          - 192.168.1.133:7006
+        max-redirects: 8
       timeout: 2000ms
       lettuce:
         pool:
