@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: order-service
+  profiles:
+    active: dev
+
+  datasource:
+    master:
+      url: jdbc:mysql://localhost:13307/order_db?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
+      username: root
+      password: xsailxma
+      driver-class-name: com.mysql.cj.jdbc.Driver
+    slaves:
+      - url: jdbc:mysql://localhost:13308/order_db?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
+        username: root
+        password: xsailxma
+        driver-class-name: com.mysql.cj.jdbc.Driver
+      - url: jdbc:mysql://localhost:13309/order_db?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
+        username: root
+        password: xsailxma
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    readonly:
+      enabled: false
+  data:
+    redis:
+      cluster:
+        nodes:
+          - 192.168.1.133:7001
+          - 192.168.1.133:7002
+          - 192.168.1.133:7003
+          - 192.168.1.133:7004
+          - 192.168.1.133:7005
+          - 192.168.1.133:7006
+        max-redirects: 8
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 1
+          max-wait: 2000ms
+
+  kafka:
+    bootstrap-servers: localhost:19092,localhost:19094,localhost:19096,localhost:19098,localhost:19100,localhost:19102
+    properties:
+      security.protocol: SASL_PLAINTEXT
+      sasl.mechanism: SCRAM-SHA-256
+      sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username="admin" password="admin-secret";
+    client-id: order-service-client
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
+      compression-type: lz4
+    consumer:
+      group-id: order-service-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+    listener:
+      missing-topics-fatal: false
+    admin:
+      fail-fast: true
+    template:
+      default-topic: order-service-test
+
+mybatis-plus:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.xs.order.service.domain.model
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    root: INFO
+    com.xs.order.service.infrastructure.persistence.mapper: DEBUG
+
+server:
+  port: 8080
+# redis cluster & kafka cluster configured
+# merged into application.yml
+
