@@ -5,9 +5,9 @@ spring:
     active: dev
 
   datasource:
-    url: jdbc:mysql://rm-uf6v4cfq4a000sr3w.mysql.rds.aliyuncs.com:3306/crm_sit?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8&allowPublicKeyRetrieval=true
-    username: crm_sit
-    password: UOGRxk4SVvt0Zncl
+    url: jdbc:mysql://rm-uf639588047126dlb.mysql.rds.aliyuncs.com:3306/fom_sit?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8mb4&allowPublicKeyRetrieval=true
+    username: fom_sit
+    password: w1aVKzdmXKZEbJjE
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:

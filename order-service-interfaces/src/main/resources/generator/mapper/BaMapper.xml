@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.order.service.infrastructure.persistence.mapper.BaMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.order.service.infrastructure.persistence.po.BaPO">
+            <id property="id" column="id" />
+            <result property="name" column="name" />
+            <result property="code" column="code" />
+            <result property="type" column="type" />
+            <result property="region" column="region" />
+            <result property="agentCode" column="agent_code" />
+            <result property="accountCode" column="account_code" />
+            <result property="doctorCode" column="doctor_code" />
+            <result property="assignUid" column="assign_uid" />
+            <result property="labelBit" column="label_bit" />
+            <result property="invoicePdsCode" column="invoice_pds_code" />
+            <result property="timeAction" column="time_action" />
+            <result property="version" column="version" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+            <result property="invoiceNickname" column="invoice_nickname" />
+            <result property="invoiceCountry" column="invoice_country" />
+            <result property="invoiceProvince" column="invoice_province" />
+            <result property="invoiceCity" column="invoice_city" />
+            <result property="invoiceDistrict" column="invoice_district" />
+            <result property="invoicePlace" column="invoice_place" />
+            <result property="invoiceZipcode" column="invoice_zipcode" />
+            <result property="invoiceAddress" column="invoice_address" />
+            <result property="vatCode" column="vat_code" />
+            <result property="viesVatCode" column="vies_vat_code" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,code,type,region,agent_code,
+        account_code,doctor_code,assign_uid,label_bit,invoice_pds_code,
+        time_action,version,create_time,update_time,delete_time,
+        invoice_nickname,invoice_country,invoice_province,invoice_city,invoice_district,
+        invoice_place,invoice_zipcode,invoice_address,vat_code,vies_vat_code
+    </sql>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.order.service.infrastructure.persistence.mapper.CaseProductionsProdMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.order.service.infrastructure.persistence.po.CaseProductionsProdPO">
+            <id property="id" column="id" />
+            <result property="caseCode" column="case_code" />
+            <result property="productionCode" column="production_code" />
+            <result property="productCode" column="product_code" />
+            <result property="timeProduction" column="time_production" />
+            <result property="version" column="version" />
+            <result property="labelBit" column="label_bit" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,case_code,production_code,product_code,time_production,version,
+        label_bit,create_time,update_time,delete_time
+    </sql>
+</mapper>

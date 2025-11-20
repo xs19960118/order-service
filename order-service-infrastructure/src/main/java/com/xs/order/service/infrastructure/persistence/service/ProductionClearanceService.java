@@ -1,0 +1,13 @@
+package com.xs.order.service.infrastructure.persistence.service;
+
+import com.xs.order.service.infrastructure.persistence.po.ProductionClearancePO;
+import com.baomidou.mybatisplus.extension.service.IService;
+
+/**
+* @author xiangshang
+* @description 针对表【production_clearance(加工单清关价格表)】的数据库操作Service
+* @createDate 2025-11-19 18:34:31
+*/
+public interface ProductionClearanceService extends IService<ProductionClearancePO> {
+
+}

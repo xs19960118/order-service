@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.order.service.infrastructure.persistence.mapper.SaCasePackageMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.order.service.infrastructure.persistence.po.SaCasePackagePO">
+            <id property="id" column="id" />
+            <result property="activityCode" column="activity_code" />
+            <result property="targetCode" column="target_code" />
+            <result property="targetDetailId" column="target_detail_id" />
+            <result property="maxCaseNum" column="max_case_num" />
+            <result property="caseNum" column="case_num" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,activity_code,target_code,target_detail_id,max_case_num,case_num,
+        create_time,update_time
+    </sql>
+</mapper>

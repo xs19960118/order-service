@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.order.service.infrastructure.persistence.mapper.OrderSapAttributeMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.order.service.infrastructure.persistence.po.OrderSapAttributePO">
+            <id property="id" column="id" />
+            <result property="orderCode" column="order_code" />
+            <result property="reasonAdjustment" column="reason_adjustment" />
+            <result property="reasonRemanufactured" column="reason_remanufactured" />
+            <result property="orderSource" column="order_source" />
+            <result property="processCode" column="process_code" />
+            <result property="processCodeType" column="process_code_type" />
+            <result property="caseOrderCode" column="case_order_code" />
+            <result property="upgradedFrom" column="upgraded_from" />
+            <result property="timeStatusChange" column="time_status_change" />
+            <result property="labelBit" column="label_bit" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,order_code,reason_adjustment,reason_remanufactured,order_source,process_code,
+        process_code_type,case_order_code,upgraded_from,time_status_change,label_bit,
+        create_time,update_time,delete_time
+    </sql>
+</mapper>

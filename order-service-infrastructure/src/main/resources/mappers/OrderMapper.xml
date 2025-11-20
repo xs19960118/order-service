@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xs.order.service.infrastructure.persistence.mapper.OrderMapper">
-    <!-- XML 可以留空，因我们用注解做演示 -->
-</mapper>
-

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.order.service.infrastructure.persistence.mapper.SaTargetSalesMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.order.service.infrastructure.persistence.po.SaTargetSalesPO">
+            <id property="id" column="id" />
+            <result property="activityCode" column="activity_code" />
+            <result property="targetCode" column="target_code" />
+            <result property="sales" column="sales" />
+            <result property="proportion" column="proportion" />
+            <result property="deleted" column="deleted" />
+            <result property="caseNum" column="case_num" />
+            <result property="type" column="type" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,activity_code,target_code,sales,proportion,deleted,
+        case_num,type
+    </sql>
+</mapper>
