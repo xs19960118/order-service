@@ -24,7 +24,6 @@ public class CommonFlowLogPO implements Serializable {
     /**
      * 创建时间
      */
-    @TableId
     private Date createTime;
 
     /**

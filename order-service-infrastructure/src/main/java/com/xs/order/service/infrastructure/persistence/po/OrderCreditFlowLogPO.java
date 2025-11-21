@@ -24,7 +24,6 @@ public class OrderCreditFlowLogPO implements Serializable {
     /**
      * 创建时间
      */
-    @TableId
     private Date createTime;
 
     /**

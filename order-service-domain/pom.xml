@@ -13,6 +13,10 @@
     <artifactId>order-service-domain</artifactId>
 
     <dependencies>
-        <!-- 领域层保持纯净，不依赖外部框架 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>
