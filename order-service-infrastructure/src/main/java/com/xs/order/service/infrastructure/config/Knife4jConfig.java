@@ -1,0 +1,45 @@
+package com.xs.order.service.infrastructure.config;
+
+import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * Knife4j 配置类
+ *
+ * @author xiangshang
+ */
+@Configuration
+public class Knife4jConfig {
+
+    /**
+     * 配置 OpenAPI 文档信息
+     *
+     * @return OpenAPI 实例
+     */
+    @Bean
+    public OpenAPI orderServiceOpenApi() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Order Service API")
+                        .description("Order Service 模块接口文档")
+                        .version("v1.0")
+                        .contact(new Contact()
+                                // 请替换为实际作者名
+                                .name("Your Name")
+                                // 请替换为实际作者网址
+                                .url("http://example.com")
+                                // 请替换为实际作者邮箱
+                                .email("your-email@example.com"))
+                        .license(new License()
+                                .name("Apache 2.0")
+                                .url("http://springdoc.org")))
+                .externalDocs(new ExternalDocumentation()
+                        .description("项目文档")
+                        .url("/doc.html"));
+    }
+}

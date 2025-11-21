@@ -13,16 +13,17 @@
     <artifactId>order-service-application</artifactId>
 
     <dependencies>
+        <!-- 项目内部模块 -->
         <dependency>
             <groupId>com.xs</groupId>
             <artifactId>order-service-domain</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.xs</groupId>
             <artifactId>order-service-infrastructure</artifactId>
-            <version>${project.version}</version>
         </dependency>
+
+        <!-- 测试 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>

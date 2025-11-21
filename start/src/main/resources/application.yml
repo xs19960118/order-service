@@ -58,3 +58,23 @@ logging:
 server:
   port: 8080
 # redis cluster & kafka cluster configured
+
+# knife4j 的增强配置
+knife4j:
+  # 是否开启增强功能
+  enable: true
+  # 自定义文档配置
+  documents:
+    - group: default
+      name: 其它文档
+      locations: classpath*:docs/*
+  setting:
+    language: zh-CN
+    enable-home-custom: true
+  basic:
+    # 访问 /doc.html 需要用户名+密码
+    enable: true
+    # 访问 /doc.html 的用户名
+    username: test
+    # 密码 /doc.html 的密码
+    password: 123456
