@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Knife4jConfig {
 
-//    private static final Logger logger = LoggerFactory.getLogger(Knife4jConfig.class);
 
     /**
      * 配置 OpenAPI 文档信息
