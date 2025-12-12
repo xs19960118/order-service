@@ -45,7 +45,9 @@ public class Knife4jConfig {
                         .url("/doc.html"));
     }
 
-    // 订单服务分组
+    /**
+     * 订单服务分组
+     */
     @Bean
     public GroupedOpenApi orderApi() {
         return GroupedOpenApi.builder()
@@ -54,7 +56,11 @@ public class Knife4jConfig {
                 .build();
     }
 
-    // 用户服务分组
+    //
+
+    /**
+     * 用户服务分组
+     */
     @Bean
     public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
@@ -63,7 +69,9 @@ public class Knife4jConfig {
                 .build();
     }
 
-    // 支付服务分组
+    /**
+     * 支付服务分组
+     */
     @Bean
     public GroupedOpenApi paymentApi() {
         return GroupedOpenApi.builder()
