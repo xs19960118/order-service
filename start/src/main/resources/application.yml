@@ -65,12 +65,25 @@ knife4j:
   enable: true
   # 自定义文档配置
   documents:
-    - group: default
-      name: 其它文档
-      locations: classpath*:docs/*
+  - group: 订单服务
+    name: "📂 项目文档 » 项目说明"
+    locations: classpath*:docs/项目说明/*
+  - group: 订单服务
+    name: "📂 项目文档 » 架构设计"
+    locations: classpath*:docs/架构设计/*
+  - group: 订单服务
+    name: "📂 开发文档 » API规范"
+    locations: classpath*:docs/api/*
+  - group: 订单服务
+    name: "📂 开发文档 » 部署指南"
+    locations: classpath*:docs/deploy/*
+  - group: 订单服务
+    name: "📂 其他文档 » 注意事项"
+    locations: classpath*:docs/其它文档/*
   setting:
     language: zh-CN
     enable-home-custom: true
+    enable-document-manage: true
   basic:
     # 访问 /doc.html 需要用户名+密码
     enable: true

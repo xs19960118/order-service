@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +16,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class Knife4jConfig {
+
+//    private static final Logger logger = LoggerFactory.getLogger(Knife4jConfig.class);
 
     /**
      * 配置 OpenAPI 文档信息
@@ -42,4 +45,32 @@ public class Knife4jConfig {
                         .description("项目文档")
                         .url("/doc.html"));
     }
+
+    // 订单服务分组
+    @Bean
+    public GroupedOpenApi orderApi() {
+        return GroupedOpenApi.builder()
+                .group("订单服务")
+                .pathsToMatch("/api/orders/**")
+                .build();
+    }
+
+    // 用户服务分组
+    @Bean
+    public GroupedOpenApi userApi() {
+        return GroupedOpenApi.builder()
+                .group("用户服务")
+                .pathsToMatch("/api/users/**")
+                .build();
+    }
+
+    // 支付服务分组
+    @Bean
+    public GroupedOpenApi paymentApi() {
+        return GroupedOpenApi.builder()
+                .group("支付服务")
+                .pathsToMatch("/api/payments/**")
+                .build();
+    }
+
 }

@@ -22,9 +22,12 @@ public class OrderController {
 
 
     @ApiOperationSupport(author = "xs")
-    @Operation(summary = "健康检查", description = "检查订单服务是否正常运行")
+    @Operation(summary = "测试接口", description = "测试订单服务是否正常运行")
     @GetMapping("/ping")
     public String ping() {
         return "OK";
     }
+
+
+
 }
