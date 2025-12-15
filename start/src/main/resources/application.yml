@@ -22,7 +22,6 @@ spring:
           max-idle: 8
           min-idle: 1
           max-wait: 2000ms
-
   kafka:
     bootstrap-servers: kafka.sit.eainc.com:9092
     client-id: order-service-client
@@ -43,20 +42,17 @@ spring:
       fail-fast: true
     template:
       default-topic: order-service-test
-
 mybatis-plus:
   mapper-locations: classpath:mappers/*.xml
   type-aliases-package: com.xs.order.service.domain.model
   configuration:
     map-underscore-to-camel-case: true
-
 logging:
   level:
     root: INFO
     com.xs.order.service.infrastructure.persistence.mapper: DEBUG
-
 server:
-  port: 8080
+  port: 8088
 # redis cluster & kafka cluster configured
 
 # knife4j 的增强配置
@@ -65,21 +61,21 @@ knife4j:
   enable: true
   # 自定义文档配置
   documents:
-  - group: 订单服务
-    name: "📂 项目文档 » 项目说明"
-    locations: classpath*:docs/项目说明/*
-  - group: 订单服务
-    name: "📂 项目文档 » 架构设计"
-    locations: classpath*:docs/架构设计/*
-  - group: 订单服务
-    name: "📂 开发文档 » API规范"
-    locations: classpath*:docs/api/*
-  - group: 订单服务
-    name: "📂 开发文档 » 部署指南"
-    locations: classpath*:docs/deploy/*
-  - group: 订单服务
-    name: "📂 其他文档 » 注意事项"
-    locations: classpath*:docs/其它文档/*
+    - group: 订单服务
+      name: "📂 项目文档 » 项目说明"
+      locations: classpath*:docs/项目说明/*
+    - group: 订单服务
+      name: "📂 项目文档 » 架构设计"
+      locations: classpath*:docs/架构设计/*
+    - group: 订单服务
+      name: "📂 开发文档 » API规范"
+      locations: classpath*:docs/api/*
+    - group: 订单服务
+      name: "📂 开发文档 » 部署指南"
+      locations: classpath*:docs/deploy/*
+    - group: 订单服务
+      name: "📂 其他文档 » 注意事项"
+      locations: classpath*:docs/其它文档/*
   setting:
     language: zh-CN
     enable-home-custom: true

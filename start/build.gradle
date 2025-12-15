@@ -8,6 +8,9 @@ dependencies {
     // Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // 数据访问（需要用于 @MapperScan 注解）
+    implementation 'com.baomidou:mybatis-plus-spring-boot3-starter'
+
     // 开发工具
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
