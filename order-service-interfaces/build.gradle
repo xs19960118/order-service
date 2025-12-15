@@ -1,0 +1,19 @@
+dependencies {
+    // 项目内部模块
+    implementation project(':order-service-application')
+    implementation project(':order-service-infrastructure')
+
+    // Web 相关
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // API 文档
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
+
+    // 工具
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 测试
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}

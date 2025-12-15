@@ -1,0 +1,28 @@
+dependencies {
+    // 项目内部模块
+    implementation project(':order-service-domain')
+
+    // API 文档
+    implementation 'com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter'
+
+    // 数据访问
+    implementation 'com.mysql:mysql-connector-j'
+    implementation 'com.baomidou:mybatis-plus-spring-boot3-starter'
+
+    // 消息队列
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
+    // AOP
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.aspectj:aspectjrt'
+    implementation 'org.aspectj:aspectjweaver'
+
+    // 工具
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // 测试
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
