@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.5' apply false
+    id 'org.springframework.boot' version '3.5.8' apply false
     id 'io.spring.dependency-management' version '1.1.4' apply false
 }
 
@@ -9,7 +9,14 @@ allprojects {
     version = '1.0-SNAPSHOT'
 
     repositories {
+        // 优先使用本地 Maven 仓库（用于自定义 starter）
+        mavenLocal()
         mavenCentral()
+        
+        // 如果需要使用私有 Maven 仓库，请取消注释并配置 URL
+        // maven {
+        //     url = uri('http://your-private-maven-repo-url/repository/maven-public/')
+        // }
     }
 }
 
@@ -30,23 +37,25 @@ subprojects {
 
     dependencyManagement {
         imports {
-            mavenBom "org.springframework.boot:spring-boot-dependencies:3.3.5"
+            mavenBom "org.springframework.boot:spring-boot-dependencies:3.5.8"
         }
         dependencies {
-            // 第三方依赖版本管理
-            // 注意：以下依赖可能已包含在 xsbox-spring-boot-starter 中，此处保留版本管理以确保版本一致性
-            dependency 'org.projectlombok:lombok:1.18.30'
-            dependency 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
-            dependency 'com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter:4.4.0'
-            dependency 'com.mysql:mysql-connector-j:8.0.33'
-            dependency 'com.baomidou:mybatis-plus-spring-boot3-starter:3.5.5'
-            dependency 'org.aspectj:aspectjrt:1.9.20.1'
-            dependency 'org.aspectj:aspectjweaver:1.9.20.1'
-            dependency 'io.swagger.core.v3:swagger-models-jakarta:2.2.19'
+            // 自定义 Starter 版本管理（统一管理 starter 版本，各子模块可直接使用）
+            dependency 'com.xs.xsbox:xsbox-spring-boot-starter:1.0.0'
+            
+            // 以下依赖已包含在 xsbox-spring-boot-starter 中，由 starter 统一管理版本，此处移除重复声明
+            // dependency 'org.projectlombok:lombok:1.18.30'
+            // dependency 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+            // dependency 'com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter:4.4.0'
+            // dependency 'com.mysql:mysql-connector-j:8.0.33'
+            // dependency 'com.baomidou:mybatis-plus-spring-boot3-starter:3.5.5'
+            // dependency 'org.aspectj:aspectjrt:1.9.20.1'
+            // dependency 'org.aspectj:aspectjweaver:1.9.20.1'
+            // dependency 'io.swagger.core.v3:swagger-models-jakarta:2.2.19'
         }
     }
 
-    tasks.withType(JavaCompile) {
+    tasks.withType(JavaCompile).configureEach {
         options.encoding = 'UTF-8'
     }
 

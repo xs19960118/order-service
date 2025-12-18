@@ -2,7 +2,11 @@ dependencies {
     // 项目内部模块
     implementation project(':order-service-domain')
 
-    // API 文档、数据访问、AOP、工具类已由 xsbox-spring-boot-starter 提供
+    // 自定义 Starter（包含 MyBatis Plus, Lombok, Swagger/Knife4j 等依赖，版本由根 build.gradle 统一管理）
+    implementation 'com.xs.xsbox:xsbox-spring-boot-starter'
+    
+    // Lombok annotationProcessor（annotationProcessor 配置不会传递，需要显式声明）
+    annotationProcessor 'org.projectlombok:lombok'
 
     // 消息队列（业务特定依赖，保留）
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'

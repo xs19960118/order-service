@@ -5,8 +5,8 @@ plugins {
 dependencies {
     implementation project(':order-service-interfaces')
 
-    // 自定义 Starter（已包含 spring-boot-starter-web, mybatis-plus 等常用依赖）
-    implementation 'com.xs.xsbox:xsbox-spring-boot-starter:1.0.0'
+    // 版本由根 build.gradle 的 dependencyManagement 统一管理
+    implementation 'com.xs.xsbox:xsbox-spring-boot-starter'
 
     // 开发工具
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

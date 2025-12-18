@@ -3,10 +3,14 @@ dependencies {
     implementation project(':order-service-application')
     implementation project(':order-service-infrastructure')
 
+    // 自定义 Starter（包含 Spring Web, Swagger/Knife4j 等依赖，版本由根 build.gradle 统一管理）
+    implementation 'com.xs.xsbox:xsbox-spring-boot-starter'
+
     // Web 相关（spring-boot-starter-web 已由 xsbox-starter 提供）
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // API 文档和工具类已由 xsbox-spring-boot-starter 提供
+    // Lombok annotationProcessor（annotationProcessor 配置不会传递，需要显式声明）
+    annotationProcessor 'org.projectlombok:lombok'
 
     // 测试
     testImplementation 'org.junit.jupiter:junit-jupiter'

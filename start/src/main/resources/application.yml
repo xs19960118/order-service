@@ -3,9 +3,16 @@ spring:
     name: order-service
   profiles:
     active: dev
+  
+  # 禁用 Spring Security 自动配置
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration
+      - org.springframework.boot.actuate.autoconfigure.security.servlet.ManagementWebSecurityAutoConfiguration
 
   datasource:
-    url: jdbc:mysql://rm-uf639588047126dlb.mysql.rds.aliyuncs.com:3306/fom_sit?useSSL=false&serverTimezone=Asia/Shanghai&characterEncoding=utf8mb4&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://rm-uf639588047126dlb.mysql.rds.aliyuncs.com:3306/fom_sit?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: fom_sit
     password: w1aVKzdmXKZEbJjE
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -54,6 +61,38 @@ logging:
 server:
   port: 8088
 # redis cluster & kafka cluster configured
+
+# xsbox starter 配置
+xsbox:
+  enabled: true
+  app-name: Order Service
+  
+  # JWT 配置（可根据项目需要覆盖）
+  jwt:
+    secret: order-service-jwt-secret-key-please-change-in-production-min-32-chars
+    expiration: 86400000  # Token 过期时间：24小时（单位：毫秒）
+    token-prefix: "Bearer "  # Token 前缀
+    token-header: "Authorization"  # Token 请求头名称
+  
+  # MyBatis Plus 配置（可选，有默认值）
+  mybatis:
+    enabled: true
+    max-limit: 1000  # 最大查询条数限制
+    performance-enabled: false  # 是否开启性能分析
+    logic-delete-field: "deleted"  # 逻辑删除字段名
+    logic-not-delete-value: 0  # 未删除值
+    logic-delete-value: 1  # 已删除值
+  
+  # Redis 配置（可选，有默认值）
+  redis:
+    key-prefix: "order:"  # Redis key 前缀
+    default-expire: 3600  # 默认过期时间（单位：秒）
+  
+  # Excel 配置（可选，有默认值）
+  excel:
+    max-rows: 100000  # 最大导出行数
+    default-sheet-name: "Sheet1"  # 默认 Sheet 名称
+    cache-enabled: true  # 是否启用缓存
 
 # knife4j 的增强配置
 knife4j:
