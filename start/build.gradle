@@ -5,11 +5,8 @@ plugins {
 dependencies {
     implementation project(':order-service-interfaces')
 
-    // Spring Boot Starters
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    // 数据访问（需要用于 @MapperScan 注解）
-    implementation 'com.baomidou:mybatis-plus-spring-boot3-starter'
+    // 自定义 Starter（已包含 spring-boot-starter-web, mybatis-plus 等常用依赖）
+    implementation 'com.xs.xsbox:xsbox-spring-boot-starter:1.0.0'
 
     // 开发工具
     developmentOnly 'org.springframework.boot:spring-boot-devtools'

@@ -2,26 +2,15 @@ dependencies {
     // 项目内部模块
     implementation project(':order-service-domain')
 
-    // API 文档
-    implementation 'com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter'
+    // API 文档、数据访问、AOP、工具类已由 xsbox-spring-boot-starter 提供
 
-    // 数据访问
-    implementation 'com.mysql:mysql-connector-j'
-    implementation 'com.baomidou:mybatis-plus-spring-boot3-starter'
-
-    // 消息队列
+    // 消息队列（业务特定依赖，保留）
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
-    // AOP
+    // AOP Starter（保留，aspectj 具体依赖已由 xsbox-starter 提供）
     implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation 'org.aspectj:aspectjrt'
-    implementation 'org.aspectj:aspectjweaver'
-
-    // 工具
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
 
     // 测试
     testImplementation 'org.junit.jupiter:junit-jupiter'

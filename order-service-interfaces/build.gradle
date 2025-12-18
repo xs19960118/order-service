@@ -3,17 +3,10 @@ dependencies {
     implementation project(':order-service-application')
     implementation project(':order-service-infrastructure')
 
-    // Web 相关
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    // Web 相关（spring-boot-starter-web 已由 xsbox-starter 提供）
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // API 文档
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui'
-    implementation 'com.github.xiaoymin:knife4j-openapi3-jakarta-spring-boot-starter'
-
-    // 工具
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    // API 文档和工具类已由 xsbox-spring-boot-starter 提供
 
     // 测试
     testImplementation 'org.junit.jupiter:junit-jupiter'
