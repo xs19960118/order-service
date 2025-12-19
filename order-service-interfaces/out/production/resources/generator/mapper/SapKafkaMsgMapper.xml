@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.order.service.infrastructure.persistence.mapper.SapKafkaMsgMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.order.service.infrastructure.persistence.po.SapKafkaMsgPO">
+            <id property="id" column="id" />
+            <result property="msgId" column="msg_id" />
+            <result property="eventName" column="event_name" />
+            <result property="status" column="status" />
+            <result property="eventKey" column="event_key" />
+            <result property="traceId" column="trace_id" />
+            <result property="eventParam" column="event_param" />
+            <result property="eventProperty" column="event_property" />
+            <result property="timestamp" column="timestamp" />
+            <result property="offset" column="offset" />
+            <result property="partition" column="partition" />
+            <result property="created" column="created" />
+            <result property="updated" column="updated" />
+            <result property="deleted" column="deleted" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,msg_id,event_name,status,event_key,trace_id,
+        event_param,event_property,timestamp,offset,partition,
+        created,updated,deleted
+    </sql>
+</mapper>

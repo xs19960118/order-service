@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.order.service.infrastructure.persistence.mapper.OrderInternationalAttributeMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.order.service.infrastructure.persistence.po.OrderInternationalAttributePO">
+            <id property="id" column="id" />
+            <result property="orderCode" column="order_code" />
+            <result property="listPrice" column="list_price" />
+            <result property="contractPrice" column="contract_price" />
+            <result property="shipToPdsCode" column="ship_to_pds_code" />
+            <result property="shipToPdsVersion" column="ship_to_pds_version" />
+            <result property="timeFirstProduction" column="time_first_production" />
+            <result property="labelBit" column="label_bit" />
+            <result property="rateId" column="rate_id" />
+            <result property="version" column="version" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+            <result property="addressCode" column="address_code" />
+            <result property="extraFeeJson" column="extra_fee_json" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,order_code,list_price,contract_price,ship_to_pds_code,ship_to_pds_version,
+        time_first_production,label_bit,rate_id,version,create_time,
+        update_time,delete_time,address_code,extra_fee_json
+    </sql>
+</mapper>

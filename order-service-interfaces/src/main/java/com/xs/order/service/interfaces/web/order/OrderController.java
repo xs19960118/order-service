@@ -1,6 +1,7 @@
 package com.xs.order.service.interfaces.web.order;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
+import com.xs.xsbox.starter.web.HttpResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,8 @@ public class OrderController {
     @ApiOperationSupport(author = "xs")
     @Operation(summary = "测试接口", description = "测试订单服务是否正常运行")
     @GetMapping("/ping")
-    public String ping() {
-        return "OK";
+    public HttpResponseEntity<String> ping() {
+        return HttpResponseEntity.ok("pong 1111 22sss");
     }
 
 

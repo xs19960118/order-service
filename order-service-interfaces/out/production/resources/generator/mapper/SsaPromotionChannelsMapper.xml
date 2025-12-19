@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.order.service.infrastructure.persistence.mapper.SsaPromotionChannelsMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.order.service.infrastructure.persistence.po.SsaPromotionChannelsPO">
+            <id property="id" column="id" />
+            <result property="promotionCode" column="promotion_code" />
+            <result property="type" column="type" />
+            <result property="datetimeStart" column="datetime_start" />
+            <result property="note" column="note" />
+            <result property="datetimeEnd" column="datetime_end" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,promotion_code,type,datetime_start,note,datetime_end,
+        create_time,update_time,delete_time
+    </sql>
+</mapper>
