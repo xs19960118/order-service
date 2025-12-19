@@ -127,6 +127,8 @@ knife4j:
     language: zh-CN
     enable-home-custom: true
     enable-document-manage: true
+    # 注意：Knife4j 4.4.0 的 group-order 配置不生效
+    # 分组排序通过 Knife4jConfig 中 Bean 方法名的字母顺序控制（a01, a02, a03...）
   basic:
     # 访问 /doc.html 需要用户名+密码
     enable: true
