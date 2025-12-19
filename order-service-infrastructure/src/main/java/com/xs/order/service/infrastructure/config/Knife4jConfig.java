@@ -49,14 +49,24 @@ public class Knife4jConfig {
      * 订单服务分组
      */
     @Bean
+    public GroupedOpenApi testApi() {
+        return GroupedOpenApi.builder()
+                .group("测试")
+                .pathsToMatch("/test/**")
+                .build();
+    }
+
+    /**
+     * 订单服务分组
+     */
+    @Bean
     public GroupedOpenApi orderApi() {
         return GroupedOpenApi.builder()
-                .group("订单服务")
+                .group("订单")
                 .pathsToMatch("/api/orders/**")
                 .build();
     }
 
-    //
 
     /**
      * 用户服务分组
@@ -64,7 +74,7 @@ public class Knife4jConfig {
     @Bean
     public GroupedOpenApi userApi() {
         return GroupedOpenApi.builder()
-                .group("用户服务")
+                .group("用户")
                 .pathsToMatch("/api/users/**")
                 .build();
     }
@@ -75,7 +85,7 @@ public class Knife4jConfig {
     @Bean
     public GroupedOpenApi paymentApi() {
         return GroupedOpenApi.builder()
-                .group("支付服务")
+                .group("支付")
                 .pathsToMatch("/api/payments/**")
                 .build();
     }
