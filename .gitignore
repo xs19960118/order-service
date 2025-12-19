@@ -42,3 +42,4 @@ build/
 .history
 .doc/
 .test
+.gradle/
