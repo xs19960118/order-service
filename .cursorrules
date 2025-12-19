@@ -1,0 +1,303 @@
+# Order Service - Cursor AI 项目导向规则
+
+## 项目概述
+这是一个基于 Spring Boot 3.5.8 的订单服务系统，采用 DDD（领域驱动设计）架构模式，使用 Gradle 作为构建工具。
+
+### 技术栈
+- **框架**: Spring Boot 3.5.8
+- **Java 版本**: Java 17
+- **构建工具**: Gradle
+- **数据库**: MySQL 8.0 + MyBatis Plus 3.5.5
+- **缓存**: Redis (Lettuce 客户端)
+- **消息队列**: Apache Kafka
+- **API 文档**: Knife4j 4.4.0 (基于 OpenAPI 3.0)
+- **自定义 Starter**: xsbox-spring-boot-starter 1.0.0
+- **工具库**: Lombok
+
+## 项目架构
+
+### DDD 分层架构
+项目采用严格的 DDD 分层架构，各层职责清晰：
+
+```
+order-service/
+├── start/                          # 启动模块
+│   └── 应用启动入口，配置文件
+├── order-service-interfaces/       # 接口层（用户接口层）
+│   └── Controller、DTO、VO
+├── order-service-application/      # 应用层
+│   └── 应用服务、编排业务流程
+├── order-service-domain/           # 领域层（核心业务逻辑）
+│   └── 领域模型、领域服务、仓储接口
+└── order-service-infrastructure/   # 基础设施层
+    └── 数据持久化、外部服务调用、技术实现
+```
+
+### 模块依赖关系
+- **start** → 依赖所有其他模块
+- **interfaces** → 依赖 application、domain
+- **application** → 依赖 domain
+- **domain** → 不依赖其他业务模块（纯领域逻辑）
+- **infrastructure** → 依赖 domain（实现领域层定义的接口）
+
+## 编码规范
+
+### 1. 包命名规范
+所有代码必须遵循以下包结构：
+```
+com.xs.order.service.{模块}.{功能}
+```
+
+**示例**：
+- 接口层: `com.xs.order.service.interfaces.web.order`
+- 应用层: `com.xs.order.service.application.order`
+- 领域层: `com.xs.order.service.domain.order`
+- 基础设施层: `com.xs.order.service.infrastructure.persistence.mapper`
+
+### 2. 类命名规范
+
+#### 接口层 (interfaces)
+- **Controller**: `*Controller.java` - RESTful API 控制器
+- **DTO**: `*Cmd.java` (命令对象), `*Qry.java` (查询对象)
+- **VO**: `*VO.java` - 视图对象
+
+#### 应用层 (application)
+- **应用服务**: `*AppService.java`
+- **命令处理器**: `*CommandHandler.java`
+- **查询处理器**: `*QueryHandler.java`
+
+#### 领域层 (domain)
+- **聚合根**: `*Aggregate.java` 或直接使用业务名称
+- **实体**: `*Entity.java` 或直接使用业务名称
+- **值对象**: `*VO.java`
+- **领域服务**: `*DomainService.java`
+- **仓储接口**: `*Repository.java`
+
+#### 基础设施层 (infrastructure)
+- **Mapper**: `*Mapper.java` - MyBatis 接口
+- **PO**: `*PO.java` - 持久化对象
+- **实现类**: `*Impl.java` - 仓储实现、服务实现
+
+### 3. 代码风格
+
+#### 注解使用
+- 所有 Controller 必须使用 `@Tag` 和 `@Operation` 注解（Knife4j/OpenAPI）
+- 使用 `@RequiredArgsConstructor` 进行构造器注入（推荐）
+- 使用 `@Slf4j` 进行日志记录
+- 数据类使用 `@Data` 或 `@Getter/@Setter`
+
+#### 示例代码
+```java
+@Slf4j
+@Tag(name = "订单管理", description = "订单相关接口")
+@RestController
+@RequestMapping("/api/orders")
+@RequiredArgsConstructor
+public class OrderController {
+    
+    private final OrderAppService orderAppService;
+    
+    @Operation(summary = "创建订单", description = "创建新订单")
+    @ApiOperationSupport(order = 1)
+    @PostMapping
+    public HttpResponseEntity<OrderVO> createOrder(@RequestBody OrderCreateCmd cmd) {
+        return HttpResponseEntity.success(orderAppService.createOrder(cmd));
+    }
+}
+```
+
+### 4. 响应格式
+- 统一使用 `HttpResponseEntity<T>` 作为响应包装类（来自 xsbox-starter）
+- 成功响应: `HttpResponseEntity.success(data)`
+- 失败响应: `HttpResponseEntity.fail(message)` 或抛出业务异常
+
+### 5. 异常处理
+- 业务异常应该在领域层或应用层抛出
+- 使用自定义异常类（如果 xsbox-starter 提供）
+- 基础设施层异常应该被转换为领域异常
+
+## 数据库规范
+
+### MyBatis Plus 配置
+- Mapper XML 文件位置: `order-service-interfaces/src/main/resources/generator/mapper/*.xml`
+- Mapper 接口位置: `order-service-infrastructure/src/main/java/com/xs/order/service/infrastructure/persistence/mapper/`
+- PO 对象位置: `order-service-infrastructure/src/main/java/com/xs/order/service/infrastructure/persistence/po/`
+
+### 命名规范
+- 表名: 小写下划线分隔 (如: `order_info`)
+- 字段名: 小写下划线分隔 (如: `order_id`)
+- PO 类名: 大驼峰 + PO 后缀 (如: `OrderInfoPO`)
+- Mapper 类名: 大驼峰 + Mapper 后缀 (如: `OrderInfoMapper`)
+
+### 逻辑删除
+- 逻辑删除字段: `deleted`
+- 未删除值: 0
+- 已删除值: 1
+
+## API 文档规范
+
+### Knife4j 配置
+- 访问地址: `http://localhost:8088/doc.html`
+- 用户名: `test`
+- 密码: `123456`
+
+### 自定义文档
+文档存放位置: `order-service-infrastructure/src/main/resources/docs/`
+- 项目说明: `docs/项目说明/*.md`
+- 架构设计: `docs/架构设计/*.md`
+- API 规范: `docs/api/*.md`
+- 部署指南: `docs/deploy/*.md`
+- 其他文档: `docs/其它文档/*.md`
+
+### API 注解规范
+```java
+@Tag(name = "模块名称", description = "模块描述")
+@Operation(summary = "接口简述", description = "接口详细描述")
+@ApiOperationSupport(order = 1) // 接口排序
+@Parameter(name = "参数名", description = "参数描述", required = true)
+```
+
+## 配置管理
+
+### 配置文件位置
+- 主配置: `start/src/main/resources/application.yml`
+- 环境配置: `application-{profile}.yml`
+
+### 关键配置项
+- **数据库**: `spring.datasource.*`
+- **Redis**: `spring.data.redis.*`
+- **Kafka**: `spring.kafka.*`
+- **MyBatis Plus**: `mybatis-plus.*`
+- **xsbox Starter**: `xsbox.*`
+- **Knife4j**: `knife4j.*`
+
+### xsbox Starter 配置
+```yaml
+xsbox:
+  enabled: true
+  app-name: Order Service
+  jwt:
+    secret: # JWT 密钥（生产环境必须修改）
+    expiration: 86400000  # 24小时
+  mybatis:
+    enabled: true
+    max-limit: 1000
+  redis:
+    key-prefix: "order:"
+    default-expire: 3600
+```
+
+## 开发指南
+
+### 新增功能开发流程
+1. **领域层**: 定义领域模型、领域服务、仓储接口
+2. **基础设施层**: 实现仓储接口、数据持久化
+3. **应用层**: 编写应用服务、编排业务流程
+4. **接口层**: 实现 Controller、定义 DTO/VO
+
+### 数据库操作
+- 优先使用 MyBatis Plus 提供的 CRUD 方法
+- 复杂查询在 Mapper XML 中编写 SQL
+- 所有 Mapper 必须继承 `BaseMapper<T>`
+
+### 日志规范
+```java
+log.info("业务操作描述, 参数={}", param);
+log.warn("警告信息, 原因={}", reason);
+log.error("错误信息", exception);
+```
+
+### 测试规范
+- 单元测试使用 JUnit 5
+- 集成测试使用 Spring Boot Test
+- 测试类命名: `*Test.java`
+
+## 依赖管理
+
+### 核心依赖
+- `xsbox-spring-boot-starter:1.0.0` - 自定义 Starter（包含常用依赖）
+- Spring Boot Starter Web
+- Spring Boot Starter Data Redis
+- Spring Kafka
+- MyBatis Plus
+- Knife4j
+- Lombok
+
+### 添加新依赖
+1. 检查是否已包含在 `xsbox-spring-boot-starter` 中
+2. 在根 `build.gradle` 的 `dependencyManagement` 中声明版本
+3. 在子模块 `build.gradle` 中引入依赖（无需指定版本）
+
+## 注意事项
+
+### 安全性
+- 生产环境必须修改 JWT Secret
+- 生产环境必须修改数据库密码
+- 生产环境必须修改 Knife4j 访问密码
+- 敏感信息不要硬编码，使用配置中心或环境变量
+
+### 性能优化
+- Redis 缓存热点数据
+- 使用 MyBatis Plus 分页插件（max-limit: 1000）
+- Kafka 消息异步处理
+- 数据库索引优化
+
+### 模块隔离
+- 领域层不依赖任何基础设施实现
+- 接口层不直接调用基础设施层
+- 应用层负责协调各层交互
+
+## AI 辅助开发建议
+
+### 当我要求生成代码时
+1. 严格遵循 DDD 分层架构
+2. 按照上述命名规范和代码风格
+3. 自动添加必要的注解（Lombok、Swagger、Spring）
+4. 生成完整的 CRUD 代码（Controller → Service → Repository → Mapper）
+5. 包含必要的异常处理和日志记录
+
+### 当我要求重构代码时
+1. 保持 DDD 架构原则
+2. 确保模块依赖关系正确
+3. 不破坏现有接口契约
+
+### 当我要求添加新功能时
+1. 先分析属于哪个聚合或模块
+2. 从领域层开始设计
+3. 逐层实现到接口层
+4. 提供完整的 API 文档注解
+
+### 当我询问问题时
+1. 基于项目实际架构和配置回答
+2. 提供可直接使用的代码示例
+3. 考虑 xsbox-starter 提供的功能
+
+## 快速命令
+
+### 构建项目
+```bash
+./gradlew build
+```
+
+### 运行项目
+```bash
+./gradlew :start:bootRun
+```
+
+### 清理构建
+```bash
+./gradlew clean
+```
+
+### 查看依赖
+```bash
+./gradlew dependencies
+```
+
+## 项目作者
+@xiangshang
+
+---
+**最后更新**: 2025-12-19
+**Cursor Rules 版本**: 1.0
+
