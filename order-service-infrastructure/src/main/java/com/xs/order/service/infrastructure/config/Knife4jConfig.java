@@ -45,49 +45,49 @@ public class Knife4jConfig {
                         .url("/doc.html"));
     }
 
-    /**
-     * 订单服务分组
-     * 注意：分组名称前加数字前缀控制排序（1-订单、2-用户、3-支付、4-测试）
-     */
-    @Bean
-    public GroupedOpenApi orderApi() {
-        return GroupedOpenApi.builder()
-                .group("1-订单")
-                .pathsToMatch("/api/orders/**")
-                .build();
-    }
-
-    /**
-     * 用户服务分组
-     */
-    @Bean
-    public GroupedOpenApi userApi() {
-        return GroupedOpenApi.builder()
-                .group("2-用户")
-                .pathsToMatch("/api/users/**")
-                .build();
-    }
-
-    /**
-     * 支付服务分组
-     */
-    @Bean
-    public GroupedOpenApi paymentApi() {
-        return GroupedOpenApi.builder()
-                .group("3-支付")
-                .pathsToMatch("/api/payments/**")
-                .build();
-    }
-
-    /**
-     * 测试分组
-     */
-    @Bean
-    public GroupedOpenApi testApi() {
-        return GroupedOpenApi.builder()
-                .group("4-测试")
-                .pathsToMatch("/test/**")
-                .build();
-    }
+//    /**
+//     * 订单服务分组
+//     * 注意：分组名称前加数字前缀控制排序（1-订单、2-用户、3-支付、4-测试）
+//     */
+//    @Bean
+//    public GroupedOpenApi orderApi() {
+//        return GroupedOpenApi.builder()
+//                .group("1-订单")
+//                .pathsToMatch("/api/orders/**")
+//                .build();
+//    }
+//
+//    /**
+//     * 用户服务分组
+//     */
+//    @Bean
+//    public GroupedOpenApi userApi() {
+//        return GroupedOpenApi.builder()
+//                .group("2-用户")
+//                .pathsToMatch("/api/users/**")
+//                .build();
+//    }
+//
+//    /**
+//     * 支付服务分组
+//     */
+//    @Bean
+//    public GroupedOpenApi paymentApi() {
+//        return GroupedOpenApi.builder()
+//                .group("3-支付")
+//                .pathsToMatch("/api/payments/**")
+//                .build();
+//    }
+//
+//    /**
+//     * 测试分组
+//     */
+//    @Bean
+//    public GroupedOpenApi testApi() {
+//        return GroupedOpenApi.builder()
+//                .group("4-测试")
+//                .pathsToMatch("/test/**")
+//                .build();
+//    }
 
 }
