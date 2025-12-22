@@ -42,6 +42,6 @@ build/
 .history
 .doc/
 .test
-.gradle/
+.gradle/*
 
 *.md
