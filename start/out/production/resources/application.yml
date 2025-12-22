@@ -19,17 +19,60 @@ spring:
     livereload:
       enabled: true
 
+  # 多数据源配置
   datasource:
-    url: jdbc:mysql://rm-uf639588047126dlb.mysql.rds.aliyuncs.com:3306/fom_sit?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    username: fom_sit
-    password: w1aVKzdmXKZEbJjE
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    # Boss 数据库（主数据源）
+    boss:
+      jdbc-url: jdbc:mysql://rm-uf639588047126dlb.mysql.rds.aliyuncs.com:3306/portal_boss_sit?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&characterEncoding=utf8
+      username: portal_boss_sit
+      password: Os75xysoEuVxiooR
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      type: com.zaxxer.hikari.HikariDataSource
+      hikari:
+        minimum-idle: 5
+        maximum-pool-size: 20
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        connection-timeout: 30000
+        pool-name: BossHikariPool
+    
+    # CRM 数据库
+    crm:
+      jdbc-url: jdbc:mysql://rm-uf6v4cfq4a000sr3w.mysql.rds.aliyuncs.com:3306/crm_sit?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&characterEncoding=utf8
+      username: crm_sit
+      password: UOGRxk4SVvt0Zncl
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      type: com.zaxxer.hikari.HikariDataSource
+      hikari:
+        minimum-idle: 3
+        maximum-pool-size: 15
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        connection-timeout: 30000
+        pool-name: CrmHikariPool
+    
+    # Report 数据库
+    report:
+      jdbc-url: jdbc:mysql://rm-uf639588047126dlb.mysql.rds.aliyuncs.com:3306/report_sit?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&characterEncoding=utf8
+      username: report_sit
+      password: zMKNoxwGZEqdW6xN
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      type: com.zaxxer.hikari.HikariDataSource
+      hikari:
+        minimum-idle: 3
+        maximum-pool-size: 10
+        idle-timeout: 600000
+        max-lifetime: 1800000
+        connection-timeout: 30000
+        pool-name: ReportHikariPool
+  
+  # Redis 配置
   data:
     redis:
       host: r-uf6jgm7mhg9bpfcrql.redis.rds.aliyuncs.com
       port: 6379
       password: crm_nonpro:R4QbjTrK5UyZPKpU
-      database: 17
+      database: 19
       timeout: 2000ms
       lettuce:
         pool:
@@ -37,9 +80,11 @@ spring:
           max-idle: 8
           min-idle: 1
           max-wait: 2000ms
+  
+  # Kafka 配置
   kafka:
     bootstrap-servers: kafka.sit.eainc.com:9092
-    client-id: order-service-client
+    client-id: boss-service-client
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
@@ -47,7 +92,7 @@ spring:
       retries: 3
       compression-type: lz4
     consumer:
-      group-id: order-service-group
+      group-id: boss
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: earliest
@@ -56,7 +101,7 @@ spring:
     admin:
       fail-fast: true
     template:
-      default-topic: order-service-test
+      default-topic: boss-service-topic
 mybatis-plus:
   mapper-locations: classpath:mappers/*.xml
   type-aliases-package: com.xs.order.service.domain.model
@@ -93,7 +138,7 @@ xsbox:
   
   # Redis 配置（可选，有默认值）
   redis:
-    key-prefix: "order:"  # Redis key 前缀
+    key-prefix: "boss_"  # Redis key 前缀
     default-expire: 3600  # 默认过期时间（单位：秒）
   
   # Excel 配置（可选，有默认值）
@@ -106,23 +151,23 @@ xsbox:
 knife4j:
   # 是否开启增强功能
   enable: true
-  # 自定义文档配置
-  documents:
-    - group: 订单服务
-      name: "📂 项目文档 » 项目说明"
-      locations: classpath*:docs/项目说明/*
-    - group: 订单服务
-      name: "📂 项目文档 » 架构设计"
-      locations: classpath*:docs/架构设计/*
-    - group: 订单服务
-      name: "📂 开发文档 » API规范"
-      locations: classpath*:docs/api/*
-    - group: 订单服务
-      name: "📂 开发文档 » 部署指南"
-      locations: classpath*:docs/deploy/*
-    - group: 订单服务
-      name: "📂 其他文档 » 注意事项"
-      locations: classpath*:docs/其它文档/*
+#  # 自定义文档配置
+#  documents:
+#    - group: 订单服务
+#      name: "📂 项目文档 » 项目说明"
+#      locations: classpath*:docs/项目说明/*
+#    - group: 订单服务
+#      name: "📂 项目文档 » 架构设计"
+#      locations: classpath*:docs/架构设计/*
+#    - group: 订单服务
+#      name: "📂 开发文档 » API规范"
+#      locations: classpath*:docs/api/*
+#    - group: 订单服务
+#      name: "📂 开发文档 » 部署指南"
+#      locations: classpath*:docs/deploy/*
+#    - group: 订单服务
+#      name: "📂 其他文档 » 注意事项"
+#      locations: classpath*:docs/其它文档/*
   setting:
     language: zh-CN
     enable-home-custom: true
@@ -130,9 +175,9 @@ knife4j:
     # 注意：Knife4j 4.4.0 的 group-order 配置不生效
     # 分组排序通过 Knife4jConfig 中 Bean 方法名的字母顺序控制（a01, a02, a03...）
   basic:
-    # 访问 /doc.html 需要用户名+密码
-    enable: true
-    # 访问 /doc.html 的用户名
-    username: test
-    # 密码 /doc.html 的密码
-    password: 123456
+#    # 访问 /doc.html 需要用户名+密码
+#    enable: true
+#    # 访问 /doc.html 的用户名
+#    username: test
+#    # 密码 /doc.html 的密码
+#    password: 123456
