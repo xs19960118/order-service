@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.SaActivityGradientMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.SaActivityGradientPO">
+            <id property="id" column="id" />
+            <result property="activityCode" column="activity_code" />
+            <result property="step" column="step" />
+            <result property="counterType" column="counter_type" />
+            <result property="startDay" column="start_day" />
+            <result property="endDay" column="end_day" />
+            <result property="preCounterStart" column="pre_counter_start" />
+            <result property="preCounterEnd" column="pre_counter_end" />
+            <result property="discountNumStart" column="discount_num_start" />
+            <result property="discountNumEnd" column="discount_num_end" />
+            <result property="price" column="price" />
+            <result property="deleted" column="deleted" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,activity_code,step,counter_type,start_day,end_day,
+        pre_counter_start,pre_counter_end,discount_num_start,discount_num_end,price,
+        deleted,create_time,update_time
+    </sql>
+</mapper>

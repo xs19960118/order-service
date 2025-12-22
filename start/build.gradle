@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation project(':order-service-interfaces')
+    implementation project(':boss-interfaces')
 
     // 版本由根 build.gradle 的 dependencyManagement 统一管理
     implementation 'com.xs.xsbox:xsbox-spring-boot-starter'
@@ -16,7 +16,7 @@ dependencies {
 }
 
 bootJar {
-    mainClass = 'com.xs.order.OrderServiceApplication'
+    mainClass = 'com.xs.boss.start.StartApplication'
 }
 
 processResources {

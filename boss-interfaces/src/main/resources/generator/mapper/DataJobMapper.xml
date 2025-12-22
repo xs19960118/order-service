@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.DataJobMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.DataJobPO">
+            <id property="id" column="id" />
+            <result property="batchId" column="batch_id" />
+            <result property="line" column="line" />
+            <result property="payloadJson" column="payload_json" />
+            <result property="status" column="status" />
+            <result property="error" column="error" />
+            <result property="resultJson" column="result_json" />
+            <result property="version" column="version" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+            <result property="payload" column="payload" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,batch_id,line,payload_json,status,error,
+        result_json,version,create_time,update_time,delete_time,
+        payload
+    </sql>
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.SsaOrderBindsMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.SsaOrderBindsPO">
+            <id property="id" column="id" />
+            <result property="targetCode" column="target_code" />
+            <result property="detailCode" column="detail_code" />
+            <result property="activityCode" column="activity_code" />
+            <result property="orderCode" column="order_code" />
+            <result property="prepayOrderCode" column="prepay_order_code" />
+            <result property="type" column="type" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,target_code,detail_code,activity_code,order_code,prepay_order_code,
+        type,create_time,update_time,delete_time
+    </sql>
+</mapper>

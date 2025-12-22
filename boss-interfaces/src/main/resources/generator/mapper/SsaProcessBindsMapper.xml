@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.SsaProcessBindsMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.SsaProcessBindsPO">
+            <id property="id" column="id" />
+            <result property="promotionCode" column="promotion_code" />
+            <result property="targetCode" column="target_code" />
+            <result property="detailCode" column="detail_code" />
+            <result property="processCode" column="process_code" />
+            <result property="timeStage" column="time_stage" />
+            <result property="state" column="state" />
+            <result property="timeUnbind" column="time_unbind" />
+            <result property="createUid" column="create_uid" />
+            <result property="modifyUid" column="modify_uid" />
+            <result property="version" column="version" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,promotion_code,target_code,detail_code,process_code,time_stage,
+        state,time_unbind,create_uid,modify_uid,version,
+        create_time,update_time,delete_time
+    </sql>
+</mapper>

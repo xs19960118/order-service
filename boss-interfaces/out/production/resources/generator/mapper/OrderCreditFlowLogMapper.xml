@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.OrderCreditFlowLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.OrderCreditFlowLogPO">
+            <id property="id" column="id" />
+            <id property="createTime" column="create_time" />
+            <result property="creditId" column="credit_id" />
+            <result property="column" column="column" />
+            <result property="oldValue" column="old_value" />
+            <result property="newValue" column="new_value" />
+            <result property="uid" column="uid" />
+            <result property="logId" column="log_id" />
+            <result property="traceId" column="trace_id" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,create_time,credit_id,column,old_value,new_value,
+        uid,log_id,trace_id
+    </sql>
+</mapper>

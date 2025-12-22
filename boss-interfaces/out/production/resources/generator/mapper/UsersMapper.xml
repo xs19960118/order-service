@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.UsersMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.UsersPO">
+            <id property="id" column="id" />
+            <result property="username" column="username" />
+            <result property="email" column="email" />
+            <result property="name" column="name" />
+            <result property="ucId" column="uc_id" />
+            <result property="roleId" column="role_id" />
+            <result property="status" column="status" />
+            <result property="labelBit" column="label_bit" />
+            <result property="deleteTime" column="delete_time" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="dingtalkUid" column="dingtalk_uid" />
+            <result property="dingtalkUnionid" column="dingtalk_unionid" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,username,email,name,uc_id,role_id,
+        status,label_bit,delete_time,create_time,update_time,
+        dingtalk_uid,dingtalk_unionid
+    </sql>
+</mapper>

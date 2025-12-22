@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.CaseRelationsMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.CaseRelationsPO">
+            <id property="id" column="id" />
+            <result property="type" column="type" />
+            <result property="bizCode" column="biz_code" />
+            <result property="caseCodeFrom" column="case_code_from" />
+            <result property="caseCodeTo" column="case_code_to" />
+            <result property="version" column="version" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,type,biz_code,case_code_from,case_code_to,version,
+        create_time,update_time,delete_time
+    </sql>
+</mapper>

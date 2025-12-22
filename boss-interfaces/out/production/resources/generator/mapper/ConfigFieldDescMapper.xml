@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.ConfigFieldDescMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.ConfigFieldDescPO">
+            <id property="id" column="id" />
+            <result property="module" column="module" />
+            <result property="field" column="field" />
+            <result property="val" column="val" />
+            <result property="zhCn" column="zh-CN" />
+            <result property="enUs" column="en-US" />
+            <result property="deleted" column="deleted" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,module,field,val,zh-CN,en-US,
+        deleted
+    </sql>
+</mapper>

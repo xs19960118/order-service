@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.SaOrderMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.SaOrderPO">
+            <id property="id" column="id" />
+            <result property="activityCode" column="activity_code" />
+            <result property="targetCode" column="target_code" />
+            <result property="caseCode" column="case_code" />
+            <result property="parentOrderCode" column="parent_order_code" />
+            <result property="parentOrderMoney" column="parent_order_money" />
+            <result property="orderCode" column="order_code" />
+            <result property="discountMoney" column="discount_money" />
+            <result property="remark" column="remark" />
+            <result property="deleted" column="deleted" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,activity_code,target_code,case_code,parent_order_code,parent_order_money,
+        order_code,discount_money,remark,deleted,create_time,
+        update_time,delete_time
+    </sql>
+</mapper>

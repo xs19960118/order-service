@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.PlaceMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.PlacePO">
+            <id property="id" column="id" />
+            <result property="name" column="name" />
+            <result property="code" column="code" />
+            <result property="districtCode" column="district_code" />
+            <result property="cityCode" column="city_code" />
+            <result property="provinceCode" column="province_code" />
+            <result property="countryCode" column="country_code" />
+            <result property="zipcode" column="zipcode" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+            <result property="nameEn" column="name_en" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,code,district_code,city_code,province_code,
+        country_code,zipcode,create_time,update_time,delete_time,
+        name_en
+    </sql>
+</mapper>

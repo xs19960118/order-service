@@ -1,8 +1,0 @@
-dependencies {
-    // 项目内部模块
-    implementation project(':order-service-domain')
-    implementation project(':order-service-infrastructure')
-
-    // 测试
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-}

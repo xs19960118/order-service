@@ -1,7 +1,7 @@
-rootProject.name = 'order-service'
+rootProject.name = 'boss'
 
-include 'order-service-domain'
-include 'order-service-application'
-include 'order-service-infrastructure'
-include 'order-service-interfaces'
+include 'boss-domain'
+include 'boss-application'
+include 'boss-infrastructure'
+include 'boss-interfaces'
 include 'start'

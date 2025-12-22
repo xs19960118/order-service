@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.StandardPackageItemsMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.StandardPackageItemsPO">
+            <id property="id" column="id" />
+            <result property="packageCode" column="package_code" />
+            <result property="code" column="code" />
+            <result property="extendCode" column="extend_code" />
+            <result property="productCode" column="product_code" />
+            <result property="quantity" column="quantity" />
+            <result property="countDispatch" column="count_dispatch" />
+            <result property="countDispatchCrm" column="count_dispatch_crm" />
+            <result property="countReceived" column="count_received" />
+            <result property="labelBit" column="label_bit" />
+            <result property="version" column="version" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,package_code,code,extend_code,product_code,quantity,
+        count_dispatch,count_dispatch_crm,count_received,label_bit,version,
+        create_time,update_time,delete_time
+    </sql>
+</mapper>

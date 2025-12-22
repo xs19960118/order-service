@@ -1,6 +1,6 @@
 spring:
   application:
-    name: order-service
+    name: boss
   profiles:
     active: dev
   
@@ -122,7 +122,7 @@ mybatis-plus:
 logging:
   level:
     root: INFO
-    com.xs.order.service.infrastructure.persistence.mapper: DEBUG
+    com.xs.boss.infrastructure.persistence.mapper: DEBUG
 server:
   port: 8088
 # redis cluster & kafka cluster configured
@@ -130,11 +130,11 @@ server:
 # xsbox starter 配置
 xsbox:
   enabled: true
-  app-name: Order Service
+  app-name: Boss
   
   # JWT 配置（可根据项目需要覆盖）
   jwt:
-    secret: order-service-jwt-secret-key-please-change-in-production-min-32-chars
+    secret: boss-jwt-secret-key-please-change-in-production-min-32-chars
     expiration: 86400000  # Token 过期时间：24小时（单位：毫秒）
     token-prefix: "Bearer "  # Token 前缀
     token-header: "Authorization"  # Token 请求头名称

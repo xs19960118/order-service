@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.SaActivityAttrsMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.SaActivityAttrsPO">
+            <id property="id" column="id" />
+            <result property="type" column="type" />
+            <result property="name" column="name" />
+            <result property="fieldName" column="field_name" />
+            <result property="fieldValue" column="field_value" />
+            <result property="dataType" column="data_type" />
+            <result property="extra" column="extra" />
+            <result property="disabled" column="disabled" />
+            <result property="deleted" column="deleted" />
+            <result property="createTime" column="create_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,type,name,field_name,field_value,data_type,
+        extra,disabled,deleted,create_time
+    </sql>
+</mapper>

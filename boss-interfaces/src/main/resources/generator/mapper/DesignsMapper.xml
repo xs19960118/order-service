@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.DesignsMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.DesignsPO">
+            <id property="id" column="id" />
+            <result property="caseCode" column="case_code" />
+            <result property="code" column="code" />
+            <result property="productCode" column="product_code" />
+            <result property="difficulty" column="difficulty" />
+            <result property="jaw" column="jaw" />
+            <result property="previousCode" column="previous_code" />
+            <result property="labelBit" column="label_bit" />
+            <result property="timeStage" column="time_stage" />
+            <result property="timeConfirm" column="time_confirm" />
+            <result property="timeAction" column="time_action" />
+            <result property="version" column="version" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,case_code,code,product_code,difficulty,jaw,
+        previous_code,label_bit,time_stage,time_confirm,time_action,
+        version,create_time,update_time,delete_time
+    </sql>
+</mapper>

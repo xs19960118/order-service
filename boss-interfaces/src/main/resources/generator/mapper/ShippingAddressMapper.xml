@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.ShippingAddressMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.ShippingAddressPO">
+            <id property="id" column="id" />
+            <result property="code" column="code" />
+            <result property="processCode" column="process_code" />
+            <result property="type" column="type" />
+            <result property="countryCode" column="country_code" />
+            <result property="provinceCode" column="province_code" />
+            <result property="cityCode" column="city_code" />
+            <result property="districtCode" column="district_code" />
+            <result property="placeCode" column="place_code" />
+            <result property="postalCode" column="postal_code" />
+            <result property="address" column="address" />
+            <result property="timeStage" column="time_stage" />
+            <result property="labelBit" column="label_bit" />
+            <result property="pdsCode" column="pds_code" />
+            <result property="pdsVersion" column="pds_version" />
+            <result property="version" column="version" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,code,process_code,type,country_code,province_code,
+        city_code,district_code,place_code,postal_code,address,
+        time_stage,label_bit,pds_code,pds_version,version,
+        create_time,update_time,delete_time
+    </sql>
+</mapper>

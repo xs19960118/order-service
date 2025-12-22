@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xs.boss.infrastructure.persistence.mapper.CasesMapper">
+
+    <resultMap id="BaseResultMap" type="com.xs.boss.infrastructure.persistence.po.CasesPO">
+            <id property="id" column="id" />
+            <result property="code" column="code" />
+            <result property="productCode" column="product_code" />
+            <result property="patientCode" column="patient_code" />
+            <result property="doctorCode" column="doctor_code" />
+            <result property="hospitalCode" column="hospital_code" />
+            <result property="groupCode" column="group_code" />
+            <result property="productionDoctorCode" column="production_doctor_code" />
+            <result property="proDesignCode" column="pro_design_code" />
+            <result property="timeDesign" column="time_design" />
+            <result property="timeProduction" column="time_production" />
+            <result property="proTimeStage" column="pro_time_stage" />
+            <result property="labelBit" column="label_bit" />
+            <result property="timeAction" column="time_action" />
+            <result property="version" column="version" />
+            <result property="createTime" column="create_time" />
+            <result property="updateTime" column="update_time" />
+            <result property="deleteTime" column="delete_time" />
+            <result property="baCode" column="ba_code" />
+            <result property="firstTimeDesignConfirm" column="first_time_design_confirm" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,code,product_code,patient_code,doctor_code,hospital_code,
+        group_code,production_doctor_code,pro_design_code,time_design,time_production,
+        pro_time_stage,label_bit,time_action,version,create_time,
+        update_time,delete_time,ba_code,first_time_design_confirm
+    </sql>
+</mapper>
