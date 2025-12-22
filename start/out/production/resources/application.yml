@@ -102,11 +102,23 @@ spring:
       fail-fast: true
     template:
       default-topic: boss-service-topic
+# MyBatis Plus 全局配置（多数据源配置已在各自的 MyBatisConfig 中定义）
+# 注意：多数据源模式下，不需要在这里配置 mapper-locations 和 type-aliases-package
+# 每个数据源的配置在对应的 MyBatisConfig 类中独立配置
 mybatis-plus:
-  mapper-locations: classpath:mappers/*.xml
-  type-aliases-package: com.xs.order.service.domain.model
+  # 全局配置
+  global-config:
+    banner: false  # 关闭 MyBatis Plus 启动 banner
+    db-config:
+      # 逻辑删除配置
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  # 通用配置
   configuration:
     map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
 logging:
   level:
     root: INFO
