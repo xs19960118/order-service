@@ -43,5 +43,6 @@ build/
 .doc/
 .test
 .gradle/*
+.idea/*
 
 *.md
