@@ -8,7 +8,7 @@
 
 | 组件 | 位置 | 作用 |
 |------|------|------|
-| `JwtProperties` | `infrastructure/security` | JWT配置属性（密钥、过期时间等） |
+| `JwtConfig` | `infrastructure/config` | JWT配置类（统一管理JWT配置） |
 | `JwtTokenProvider` | `infrastructure/security` | JWT工具类（生成、解析、验证Token） |
 | `JwtAuthInterceptor` | `infrastructure/security` | JWT认证拦截器（拦截请求验证Token） |
 | `SecurityContextHolder` | `infrastructure/security` | 用户上下文（ThreadLocal存储当前用户） |

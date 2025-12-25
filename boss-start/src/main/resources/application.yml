@@ -127,7 +127,7 @@ server:
   port: 8088
 # redis cluster & kafka cluster configured
 
-# JWT 配置（你的配置，直接用就行）
+# JWT 配置
 jwt:
   secret: LO5MJI7re0TrFKjJY80QJYntsYgEDOOY
   algo: HS256
@@ -171,23 +171,17 @@ xsbox:
 knife4j:
   # 是否开启增强功能
   enable: true
-#  # 自定义文档配置
-#  documents:
-#    - group: 订单服务
-#      name: "📂 项目文档 » 项目说明"
-#      locations: classpath*:docs/项目说明/*
-#    - group: 订单服务
-#      name: "📂 项目文档 » 架构设计"
-#      locations: classpath*:docs/架构设计/*
-#    - group: 订单服务
-#      name: "📂 开发文档 » API规范"
-#      locations: classpath*:docs/api/*
-#    - group: 订单服务
-#      name: "📂 开发文档 » 部署指南"
-#      locations: classpath*:docs/deploy/*
-#    - group: 订单服务
-#      name: "📂 其他文档 » 注意事项"
-#      locations: classpath*:docs/其它文档/*
+  # 自定义文档配置
+  documents:
+    - group: Boss服务
+      name: "📋 项目说明"
+      locations: classpath:docs/项目说明/*
+    - group: Boss服务
+      name: "🏗️ 架构设计"
+      locations: classpath:docs/架构设计/*
+    - group: Boss服务
+      name: "📚 其它文档"
+      locations: classpath:docs/其它文档/*
   setting:
     language: zh-CN
     enable-home-custom: true
