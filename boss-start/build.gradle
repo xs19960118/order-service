@@ -24,3 +24,4 @@ processResources {
         expand(project.properties)
     }
 }
+

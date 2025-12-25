@@ -34,3 +34,4 @@ public class StartApplication {
         return "start-module-loaded";
     }
 }
+

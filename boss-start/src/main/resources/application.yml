@@ -127,7 +127,15 @@ server:
   port: 8088
 # redis cluster & kafka cluster configured
 
-# xsbox starter 配置
+# JWT 配置（你的配置，直接用就行）
+jwt:
+  secret: LO5MJI7re0TrFKjJY80QJYntsYgEDOOY
+  algo: HS256
+  expire: 28800  # Token 过期时间：8小时（单位：秒）
+  header: Authorization
+  prefix: "Bearer "
+
+# xsbox starter 配置（不用改）
 xsbox:
   enabled: true
   app-name: Boss
@@ -193,3 +201,4 @@ knife4j:
 #    username: test
 #    # 密码 /doc.html 的密码
 #    password: 123456
+
