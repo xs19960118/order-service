@@ -42,15 +42,15 @@ public class JwtTokenProvider {
         var expiryDate = new Date(now.getTime() + jwtConfig.getExpire() * 1000L);
 
         var builder = Jwts.builder()
-                .setSubject(userId.toString())
-                .setIssuedAt(now)
-                .setExpiration(expiryDate)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256);
+                .subject(userId.toString())
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(getSigningKey());
 
         // 添加自定义 Payload（使用 Optional 处理 null）
         Optional.ofNullable(payload)
                 .filter(p -> !p.isEmpty())
-                .ifPresent(builder::addClaims);
+                .ifPresent(p -> builder.claims(p));
 
         return builder.compact();
     }
@@ -76,11 +76,11 @@ public class JwtTokenProvider {
      */
     public Claims parseToken(String token) {
         try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
+            return Jwts.parser()
+                    .verifyWith(getSigningKey())
                     .build()
-                    .parseClaimsJws(token)
-                    .getBody();
+                    .parseSignedClaims(token)
+                    .getPayload();
         } catch (ExpiredJwtException e) {
             log.warn("JWT Token 已过期: {}", e.getMessage());
             throw new JwtAuthenticationException("Token 已过期", e);
@@ -89,7 +89,7 @@ public class JwtTokenProvider {
             var message = e instanceof UnsupportedJwtException ? "不支持的 Token 格式" : "Token 格式错误";
             log.warn("JWT Token 格式异常: {}", e.getMessage());
             throw new JwtAuthenticationException(message, e);
-        } catch (SignatureException e) {
+        } catch (JwtException e) {
             log.warn("JWT Token 签名验证失败: {}", e.getMessage());
             throw new JwtAuthenticationException("Token 签名验证失败", e);
         } catch (IllegalArgumentException e) {
