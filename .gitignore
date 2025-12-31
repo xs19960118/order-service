@@ -45,6 +45,9 @@ build/
 
 # Gradle 构建缓存（完全忽略）
 .gradle/
+.gradle/**
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
 
 # 文档保留，只忽略临时文档
 # *.md  # 不要忽略所有md文件！

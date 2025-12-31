@@ -27,7 +27,12 @@ boss-interfaces   boss-infrastructure
     ↓                   ↓
     └─────→ boss-application
                 ↓
-            boss-domain (核心，不依赖其他业务模块)
+            boss-domain (核心，不依赖其他业务模块)            
+```
+
+```
+interface层 → application层 → domain层 ← infrastructure层
+（infrastructure层实现domain层定义的接口，依赖倒置）
 ```
 
 ## 各层职责

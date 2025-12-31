@@ -1,9 +1,11 @@
 package com.xs.boss.infrastructure.security;
 
 import com.xs.boss.infrastructure.config.JwtConfig;
+import com.xs.boss.infrastructure.enums.ErrorCodeEnum;
+import com.xs.boss.infrastructure.exception.BossBusinessException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -21,55 +23,54 @@ import java.util.Optional;
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class JwtTokenProvider {
 
+    /**
+     * 1小时对应的毫秒数
+     */
     private static final long ONE_HOUR_MILLIS = 3600000L;
 
-    private final JwtConfig jwtConfig;
+    @Resource
+    private JwtConfig jwtConfig;
 
     /**
-     * 生成 JWT Token
-     * <p>
-     * 使用 JDK 17 特性优化：var 关键字、Optional 处理 null
+     * 生成 Token
      *
-     * @param userId  用户ID
-     * @param payload 额外负载数据
-     * @return JWT Token
+     * @param payload jwt.payload
+     * @return token
      */
-    public String generateToken(Long userId, Map<String, Object> payload) {
-        var now = new Date();
-        var expiryDate = new Date(now.getTime() + jwtConfig.getExpire() * 1000L);
+    public String generateToken(Map<String, Object> payload) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtConfig.getExpire() * 1000L);
 
-        var builder = Jwts.builder()
-                .subject(userId.toString())
+        JwtBuilder builder = Jwts.builder()
+                .subject(payload.get("username").toString())
                 .issuedAt(now)
                 .expiration(expiryDate)
                 .signWith(getSigningKey());
 
-        // 添加自定义 Payload（使用 Optional 处理 null）
-        Optional.ofNullable(payload)
+        Optional.of(payload)
                 .filter(p -> !p.isEmpty())
-                .ifPresent(p -> builder.claims(p));
+                .ifPresent(builder::claims);
 
         return builder.compact();
     }
 
     /**
-     * 从 Token 中解析用户ID
+     * 从 Token 中解析用户名
      *
      * @param token JWT Token
-     * @return 用户ID
+     * @return 用户名
      */
-    public Long getUserIdFromToken(String token) {
-        var claims = parseToken(token);
-        return Long.parseLong(claims.getSubject());
+    public String getUsernameFromToken(String token) {
+        Claims claims = parseToken(token);
+        return claims.getSubject();
     }
 
     /**
      * 从 Token 中获取所有 Claims
      * <p>
-     * 使用 JDK 17 的异常处理优化，统一处理 JWT 相关异常
+     * 使用 JDK 17 的 pattern matching for instanceof 优化异常处理，统一包装为 BossBusinessException
      *
      * @param token JWT Token
      * @return Claims
@@ -81,20 +82,32 @@ public class JwtTokenProvider {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-        } catch (ExpiredJwtException e) {
-            log.warn("JWT Token 已过期: {}", e.getMessage());
-            throw new JwtAuthenticationException("Token 已过期", e);
-        } catch (UnsupportedJwtException | MalformedJwtException e) {
-            // 合并处理格式相关异常
-            var message = e instanceof UnsupportedJwtException ? "不支持的 Token 格式" : "Token 格式错误";
-            log.warn("JWT Token 格式异常: {}", e.getMessage());
-            throw new JwtAuthenticationException(message, e);
-        } catch (JwtException e) {
-            log.warn("JWT Token 签名验证失败: {}", e.getMessage());
-            throw new JwtAuthenticationException("Token 签名验证失败", e);
-        } catch (IllegalArgumentException e) {
-            log.warn("JWT Token 为空: {}", e.getMessage());
-            throw new JwtAuthenticationException("Token 不能为空", e);
+        } catch (Exception e) {
+            BossBusinessException exception = convertToBossBusinessException(e);
+            log.warn("JWT Token 解析异常: {}", exception.getMessage());
+            throw exception;
+        }
+    }
+
+    /**
+     * 将异常转换为 BossBusinessException
+     *
+     * @param e 异常
+     * @return BossBusinessException
+     */
+    private BossBusinessException convertToBossBusinessException(Exception e) {
+        if (e instanceof ExpiredJwtException expiredJwtException) {
+            return new BossBusinessException(ErrorCodeEnum.TOKEN_EXPIRED, expiredJwtException);
+        } else if (e instanceof UnsupportedJwtException unsupportedJwtException) {
+            return new BossBusinessException(ErrorCodeEnum.TOKEN_UNSUPPORTED, unsupportedJwtException);
+        } else if (e instanceof MalformedJwtException malformedJwtException) {
+            return new BossBusinessException(ErrorCodeEnum.TOKEN_MALFORMED, malformedJwtException);
+        } else if (e instanceof JwtException jwtException) {
+            return new BossBusinessException(ErrorCodeEnum.TOKEN_SIGNATURE_INVALID, jwtException);
+        } else if (e instanceof IllegalArgumentException illegalArgumentException) {
+            return new BossBusinessException(ErrorCodeEnum.TOKEN_EMPTY, illegalArgumentException);
+        } else {
+            return new BossBusinessException(ErrorCodeEnum.TOKEN_PARSE_ERR, e);
         }
     }
 
@@ -108,7 +121,7 @@ public class JwtTokenProvider {
         try {
             parseToken(token);
             return true;
-        } catch (JwtAuthenticationException e) {
+        } catch (BossBusinessException e) {
             return false;
         }
     }
@@ -120,7 +133,7 @@ public class JwtTokenProvider {
      * @return 过期时间
      */
     public Date getExpirationFromToken(String token) {
-        var claims = parseToken(token);
+        Claims claims = parseToken(token);
         return claims.getExpiration();
     }
 
@@ -131,8 +144,8 @@ public class JwtTokenProvider {
      * @return 是否即将过期
      */
     public boolean isTokenExpiringSoon(String token) {
-        var expiration = getExpirationFromToken(token);
-        var diff = expiration.getTime() - System.currentTimeMillis();
+        Date expiration = getExpirationFromToken(token);
+        long diff = expiration.getTime() - System.currentTimeMillis();
         return diff < ONE_HOUR_MILLIS;
     }
 
@@ -140,7 +153,7 @@ public class JwtTokenProvider {
      * 获取签名密钥
      */
     private SecretKey getSigningKey() {
-        var keyBytes = jwtConfig.getSecret().getBytes(StandardCharsets.UTF_8);
+        byte[] keyBytes = jwtConfig.getSecret().getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

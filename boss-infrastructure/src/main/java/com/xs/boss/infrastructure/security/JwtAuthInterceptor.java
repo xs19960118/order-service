@@ -27,7 +27,6 @@ import java.util.Optional;
  * <p>
  * 使用 JDK 17 特性优化：
  * - Pattern matching for instanceof
- * - var 关键字简化变量声明
  * - Optional 链式调用优化 null 处理
  * - 方法提取提高可读性
  *
@@ -39,6 +38,7 @@ import java.util.Optional;
 public class JwtAuthInterceptor implements HandlerInterceptor {
 
     private static final String USER_KEY_PREFIX = "boss_user:";
+    private static final String USERNAME_KEY_PREFIX = "boss_user:username:";
     private static final String JSON_CONTENT_TYPE = "application/json;charset=UTF-8";
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -54,26 +54,26 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
         }
 
         // 2. 优先检查 @SkipJWT 注解（优先级高于 @JWT）
-        var skipJwtAnnotation = findSkipJwtAnnotation(handlerMethod);
+        Optional<SkipJWT> skipJwtAnnotation = findSkipJwtAnnotation(handlerMethod);
         if (skipJwtAnnotation.isPresent()) {
-            var skipReason = skipJwtAnnotation.get().value();
+            String skipReason = skipJwtAnnotation.get().value();
             log.debug("接口标记 @SkipJWT，跳过认证: {} {}", request.getRequestURI(), 
                     skipReason.isEmpty() ? "" : "(" + skipReason + ")");
             return true;
         }
 
         // 3. 查找 @JWT 注解（方法优先，类次之）
-        var jwtAnnotation = findJwtAnnotation(handlerMethod);
+        Optional<JWT> jwtAnnotation = findJwtAnnotation(handlerMethod);
         if (jwtAnnotation.isEmpty()) {
             log.debug("接口未标记 @JWT 注解，跳过认证: {}", request.getRequestURI());
             return true;
         }
 
-        var annotation = jwtAnnotation.get();
-        var required = annotation.required();
+        JWT annotation = jwtAnnotation.get();
+        boolean required = annotation.required();
 
         // 4. 提取 Token
-        var token = extractToken(request);
+        Optional<String> token = extractToken(request);
         if (token.isEmpty()) {
             return handleMissingToken(request, response, required);
         }
@@ -92,7 +92,7 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
      * 查找 @SkipJWT 注解（方法优先，类次之）
      */
     private Optional<SkipJWT> findSkipJwtAnnotation(HandlerMethod handlerMethod) {
-        var methodAnnotation = Optional.ofNullable(handlerMethod.getMethodAnnotation(SkipJWT.class));
+        Optional<SkipJWT> methodAnnotation = Optional.ofNullable(handlerMethod.getMethodAnnotation(SkipJWT.class));
         return methodAnnotation.or(() -> Optional.ofNullable(handlerMethod.getBeanType().getAnnotation(SkipJWT.class)));
     }
 
@@ -100,7 +100,7 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
      * 查找 @JWT 注解（方法优先，类次之）
      */
     private Optional<JWT> findJwtAnnotation(HandlerMethod handlerMethod) {
-        var methodAnnotation = Optional.ofNullable(handlerMethod.getMethodAnnotation(JWT.class));
+        Optional<JWT> methodAnnotation = Optional.ofNullable(handlerMethod.getMethodAnnotation(JWT.class));
         return methodAnnotation.or(() -> Optional.ofNullable(handlerMethod.getBeanType().getAnnotation(JWT.class)));
     }
 
@@ -108,7 +108,7 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
      * 从请求头提取 Token
      */
     private Optional<String> extractToken(HttpServletRequest request) {
-        var bearerToken = request.getHeader(jwtConfig.getHeader());
+        String bearerToken = request.getHeader(jwtConfig.getHeader());
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(jwtConfig.getPrefix())) {
             return Optional.of(bearerToken.substring(jwtConfig.getPrefix().length()));
         }
@@ -137,13 +137,23 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
                 return handleValidationFailure(request, response, required, "Token 验证失败");
             }
 
-            // 解析 Token 获取用户ID
-            var userId = jwtTokenProvider.getUserIdFromToken(token);
-            log.debug("Token 验证成功, 用户ID: {}", userId);
+            // 解析 Token 获取用户名
+            String username = jwtTokenProvider.getUsernameFromToken(token);
+            log.debug("Token 验证成功, 用户名: {}", username);
 
             // 加载用户信息并设置到上下文
-            var currentUser = loadUserFromRedis(userId, token)
-                    .orElseGet(() -> CurrentUser.builder().userId(userId).build());
+            CurrentUser currentUser = loadUserFromRedis(username, token)
+                    .orElseGet(() -> {
+                        // 如果无法加载用户信息，从 Token Claims 中构建基本用户信息
+                        Claims claims = jwtTokenProvider.parseToken(token);
+                        return CurrentUser.builder()
+                                .username(username)
+                                .realName(getClaimValue(claims, "realName"))
+                                .mobile(getClaimValue(claims, "mobile"))
+                                .email(getClaimValue(claims, "email"))
+                                .role(getClaimValue(claims, "role"))
+                                .build();
+                    });
 
             SecurityContextHolder.setCurrentUser(currentUser);
             log.debug("用户认证成功: userId={}, username={}", currentUser.getUserId(), currentUser.getUsername());
@@ -195,32 +205,58 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
      * 从 Redis 加载用户信息
      * <p>
      * 优先从 Redis 加载，如果不存在则从 Token Claims 中构建
+     *
+     * @param username 用户名
+     * @param token    JWT Token
+     * @return 用户信息
      */
-    private Optional<CurrentUser> loadUserFromRedis(Long userId, String token) {
+    private Optional<CurrentUser> loadUserFromRedis(String username, String token) {
         try {
-            // 方案1: 从 Redis 加载完整用户信息
-            var userKey = USER_KEY_PREFIX + userId;
-            var userJson = stringRedisTemplate.opsForValue().get(userKey);
+            // 方案1: 使用 username 作为 key 从 Redis 加载完整用户信息
+            String userKey = USERNAME_KEY_PREFIX + username;
+            String userJson = stringRedisTemplate.opsForValue().get(userKey);
 
             if (StringUtils.hasText(userJson)) {
                 return Optional.of(objectMapper.readValue(userJson, CurrentUser.class));
             }
 
-            // 方案2: 从 Token 的 Claims 中获取用户信息
-            var claims = jwtTokenProvider.parseToken(token);
-            var user = CurrentUser.builder()
-                    .userId(userId)
-                    .username(getClaimValue(claims, "username"))
+            // 方案2: 尝试使用 userId 作为 key（兼容旧数据）
+            Claims claims = jwtTokenProvider.parseToken(token);
+            String userId = getClaimValue(claims, "userId");
+            if (StringUtils.hasText(userId)) {
+                try {
+                    String userIdKey = USER_KEY_PREFIX + userId;
+                    userJson = stringRedisTemplate.opsForValue().get(userIdKey);
+                    if (StringUtils.hasText(userJson)) {
+                        return Optional.of(objectMapper.readValue(userJson, CurrentUser.class));
+                    }
+                } catch (Exception ignored) {
+                    // 忽略 userId 解析错误
+                }
+            }
+
+            // 方案3: 从 Token 的 Claims 中构建用户信息
+            CurrentUser user = CurrentUser.builder()
+                    .username(username)
                     .realName(getClaimValue(claims, "realName"))
                     .mobile(getClaimValue(claims, "mobile"))
                     .email(getClaimValue(claims, "email"))
                     .role(getClaimValue(claims, "role"))
                     .build();
 
+            // 如果 Claims 中有 userId，也设置上
+            if (StringUtils.hasText(userId)) {
+                try {
+                    user.setUserId(Long.parseLong(userId));
+                } catch (NumberFormatException ignored) {
+                    // 忽略解析错误
+                }
+            }
+
             return Optional.of(user);
 
         } catch (Exception e) {
-            log.warn("从 Redis 加载用户信息失败: userId={}, error={}", userId, e.getMessage());
+            log.warn("从 Redis 加载用户信息失败: username={}, error={}", username, e.getMessage());
             return Optional.empty();
         }
     }
@@ -239,8 +275,8 @@ public class JwtAuthInterceptor implements HandlerInterceptor {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType(JSON_CONTENT_TYPE);
 
-        var result = HttpResponseEntity.fail(401, message);
-        var writer = response.getWriter();
+        HttpResponseEntity<?> result = HttpResponseEntity.fail(401, message);
+        PrintWriter writer = response.getWriter();
         writer.write(objectMapper.writeValueAsString(result));
         writer.flush();
         return false;

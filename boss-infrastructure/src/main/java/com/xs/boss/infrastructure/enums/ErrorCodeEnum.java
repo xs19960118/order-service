@@ -69,49 +69,64 @@ public enum ErrorCodeEnum {
 
     // ========== 认证授权相关错误 2xxxx ==========
     /**
-     * 未登录或Token已过期
+     * 未登录或 Token 已过期
      */
-    UNAUTHORIZED(20001, "未登录或Token已过期"),
+    UNAUTHORIZED(20001, "未登录或 Token 已过期"),
 
     /**
-     * Token无效
+     * Token 无效
      */
-    TOKEN_INVALID(20002, "Token无效"),
+    TOKEN_INVALID(20002, "Token 无效"),
 
     /**
-     * Token已过期
+     * Token 已过期
      */
-    TOKEN_EXPIRED(20003, "Token已过期"),
+    TOKEN_EXPIRED(20003, "Token 已过期"),
 
     /**
-     * Token格式错误
+     * Token 格式错误
      */
-    TOKEN_MALFORMED(20004, "Token格式错误"),
+    TOKEN_MALFORMED(20004, "Token 格式错误"),
 
     /**
-     * Token签名验证失败
+     * 不支持的 Token 格式
      */
-    TOKEN_SIGNATURE_INVALID(20005, "Token签名验证失败"),
+    TOKEN_UNSUPPORTED(20005, "不支持的 Token 格式"),
+
+    /**
+     * Token 签名验证失败
+     */
+    TOKEN_SIGNATURE_INVALID(20006, "Token 签名验证失败"),
+
+    /**
+     * Token 为空
+     */
+    TOKEN_EMPTY(20011, "Token 不可为空"),
+
+    /**
+     * Token 解析失败
+     */
+    TOKEN_PARSE_ERR(20011, "Token 解析失败"),
 
     /**
      * 无权限访问
      */
-    FORBIDDEN(20006, "无权限访问"),
+    FORBIDDEN(20007, "无权限访问"),
 
     /**
      * 用户名或密码错误
      */
-    LOGIN_FAILED(20007, "用户名或密码错误"),
+    LOGIN_FAILED(20008, "用户名或密码错误"),
 
     /**
      * 账号已被禁用
      */
-    ACCOUNT_DISABLED(20008, "账号已被禁用"),
+    ACCOUNT_DISABLED(20009, "账号已被禁用"),
 
     /**
      * 账号已被锁定
      */
-    ACCOUNT_LOCKED(20009, "账号已被锁定"),
+    ACCOUNT_LOCKED(20010, "账号已被锁定"),
 
     // ========== 业务逻辑错误 3xxxx ==========
     /**

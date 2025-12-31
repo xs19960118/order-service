@@ -165,4 +165,37 @@ public class BossBusinessException extends BusinessException {
     public static BossBusinessException businessError(String message) {
         return new BossBusinessException(ErrorCodeEnum.BUSINESS_ERROR, message);
     }
+
+    /**
+     * 对象为 null 时抛出异常（使用错误码枚举）
+     * <p>
+     * 用法：assert BossBusinessException.throwIfNull(obj, ErrorCodeEnum.PARAM_ERROR, "obj 不能为 null");
+     *
+     * @param obj           要检查的对象
+     * @param errorCodeEnum 错误码枚举
+     * @param message       错误消息
+     * @throws BossBusinessException 如果对象为 null
+     */
+    public static void throwIfNull(Object obj, ErrorCodeEnum errorCodeEnum, String message) {
+        if (obj == null) {
+            throw new BossBusinessException(errorCodeEnum, message);
+        }
+    }
+
+    /**
+     * 条件为 true 时抛出异常（使用错误码枚举）
+     * <p>
+     * 用法：assert BossBusinessException.throwIfTrue(condition, ErrorCodeEnum.PARAM_ERROR, "obj 不能为 null");
+     *
+     * @param condition     条件
+     * @param errorCodeEnum 错误码枚举
+     * @param message       错误消息
+     * @throws BossBusinessException 如果对象为 null
+     */
+    public static void throwIfTrue(Boolean condition, ErrorCodeEnum errorCodeEnum, String message) {
+        if (condition) {
+            throw new BossBusinessException(errorCodeEnum, message);
+        }
+    }
+
 }

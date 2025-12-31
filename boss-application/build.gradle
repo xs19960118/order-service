@@ -3,6 +3,12 @@ dependencies {
     implementation project(':boss-domain')
     implementation project(':boss-infrastructure')
 
+    // Spring Boot Starter（包含 Spring Context，提供 @Service 等注解）
+    implementation 'org.springframework.boot:spring-boot-starter'
+
+    // Lombok annotationProcessor（annotationProcessor 配置不会传递，需要显式声明）
+    annotationProcessor 'org.projectlombok:lombok'
+
     // 测试
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
