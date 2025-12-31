@@ -2,7 +2,7 @@ package com.xs.boss.interfaces.web.auth;
 
 import com.github.xiaoymin.knife4j.annotations.ApiOperationSupport;
 import com.xs.boss.infrastructure.security.JwtTokenProvider;
-import com.xs.boss.infrastructure.security.SkipAuth;
+import com.xs.boss.infrastructure.annotation.SkipJWT;
 import com.xs.xsbox.starter.web.HttpResponseEntity;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,7 +33,7 @@ public class AuthController {
      * 登录接口（模拟）
      * 实际项目中应该验证用户名密码，这里仅作演示
      */
-    @SkipAuth("登录接口，无需认证")
+    @SkipJWT("登录接口，无需认证")
     @ApiOperationSupport(order = 1)
     @Operation(summary = "用户登录", description = "用户登录获取JWT Token")
     @PostMapping("/login")
@@ -70,7 +70,7 @@ public class AuthController {
     /**
      * 刷新Token接口
      */
-    @SkipAuth("刷新Token，无需认证")
+    @SkipJWT("刷新Token，无需认证")
     @ApiOperationSupport(order = 2)
     @Operation(summary = "刷新Token", description = "使用旧Token刷新获取新Token")
     @PostMapping("/refresh")
@@ -97,7 +97,7 @@ public class AuthController {
     /**
      * 注册接口（占位）
      */
-    @SkipAuth("注册接口，无需认证")
+    @SkipJWT("注册接口，无需认证")
     @ApiOperationSupport(order = 3)
     @Operation(summary = "用户注册", description = "新用户注册")
     @PostMapping("/register")

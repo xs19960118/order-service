@@ -4,13 +4,26 @@
 
 本项目使用 **JWT（JSON Web Token）** + **拦截器（HandlerInterceptor）** 实现统一的用户认证机制。
 
+### 技术特性
+
+- ✅ **基于注解的认证**：使用 `@JWT` 注解标记需要认证的接口
+- ✅ **JDK 17 特性优化**：充分利用现代 Java 特性
+  - Pattern Matching for instanceof（模式匹配）
+  - `var` 关键字简化变量声明
+  - `Optional` 链式调用优化 null 处理
+  - 方法提取提高代码可读性
+- ✅ **灵活的认证策略**：支持必需认证和可选认证
+- ✅ **用户上下文管理**：ThreadLocal 存储当前用户信息
+
 ### 核心组件
 
 | 组件 | 位置 | 作用 |
 |------|------|------|
 | `JwtConfig` | `infrastructure/config` | JWT配置类（统一管理JWT配置） |
-| `JwtTokenProvider` | `infrastructure/security` | JWT工具类（生成、解析、验证Token） |
-| `JwtAuthInterceptor` | `infrastructure/security` | JWT认证拦截器（拦截请求验证Token） |
+| `JwtTokenProvider` | `infrastructure/security` | JWT工具类（生成、解析、验证Token，使用JDK17特性优化） |
+| `JwtAuthInterceptor` | `infrastructure/security` | JWT认证拦截器（基于注解，使用JDK17特性优化） |
+| `@JWT` | `infrastructure/annotation` | JWT认证注解（标记需要认证的接口） |
+| `@SkipJWT` | `infrastructure/annotation` | 跳过JWT认证注解（优先级高于@JWT，标记不需要认证的接口） |
 | `SecurityContextHolder` | `infrastructure/security` | 用户上下文（ThreadLocal存储当前用户） |
 | `CurrentUser` | `domain/user/model` | 当前登录用户领域模型 |
 | `WebMvcConfig` | `infrastructure/config` | 拦截器配置（配置拦截路径） |
@@ -32,13 +45,18 @@ jwt:
 
 ### 拦截规则
 
-默认拦截所有 `/api/**` 路径，以下路径**不拦截**：
+**基于注解的认证机制**：拦截器只对标记了 `@JWT` 注解的接口进行Token验证。
 
-- `/api/v1/auth/login` - 登录
-- `/api/v1/auth/register` - 注册
-- `/test/**` - 测试接口
+- 默认拦截所有 `/api/**` 路径
+- 拦截器内部会检查方法或类上是否有 `@JWT` 注解
+- **只有标记了 `@JWT` 注解的接口才会进行Token验证**
+- 未标记 `@JWT` 注解的接口直接放行，无需认证
+
+**排除路径**（这些路径不会被拦截器处理）：
 - `/doc.html` - Knife4j文档
+- `/swagger-ui/**` - Swagger UI
 - `/actuator/**` - 健康检查
+- `/static/**` - 静态资源
 
 **修改拦截规则**: 编辑 `WebMvcConfig.addInterceptors()` 方法
 
@@ -136,35 +154,131 @@ curl -X GET http://localhost:8088/api/v1/user/current \
 
 ## 💻 开发指南
 
-### 跳过JWT认证
+### 使用 @JWT 注解进行认证
 
-如果某个接口不需要认证，使用 `@SkipAuth` 注解：
+**方式1: 在方法上标记（推荐）**
 
 ```java
-@SkipAuth("接口说明，无需认证")
-@PostMapping("/public-api")
-public HttpResponseEntity<String> publicApi() {
-    return HttpResponseEntity.ok("无需认证的接口");
+@JWT
+@Operation(summary = "创建订单", description = "创建新订单")
+@PostMapping("/orders")
+public HttpResponseEntity<OrderVO> createOrder(@RequestBody OrderCreateCmd cmd) {
+    // 该接口需要JWT认证
+    var currentUser = SecurityContextHolder.getCurrentUser();
+    // ... 业务逻辑
+    return HttpResponseEntity.success(orderVO);
 }
 ```
 
-**注意**: 还需要在 `WebMvcConfig` 中配置排除路径！
+**方式2: 在类上标记（整个Controller都需要认证）**
+
+```java
+@JWT
+@RestController
+@RequestMapping("/api/v1/orders")
+public class OrderController {
+    
+    @PostMapping
+    public HttpResponseEntity<OrderVO> createOrder() {
+        // 该接口需要JWT认证
+    }
+    
+    @GetMapping("/{id}")
+    public HttpResponseEntity<OrderVO> getOrder(@PathVariable Long id) {
+        // 该接口也需要JWT认证
+    }
+}
+```
+
+**方式3: 可选认证（required=false）**
+
+```java
+@JWT(required = false)
+@GetMapping("/public-info")
+public HttpResponseEntity<PublicInfoVO> getPublicInfo() {
+    // 如果提供了Token，会解析并设置用户信息
+    // 如果没有Token，也会放行
+    var user = SecurityContextHolder.getCurrentUser();
+    if (user != null) {
+        // 已登录用户，返回个性化信息
+    } else {
+        // 未登录用户，返回通用信息
+    }
+    return HttpResponseEntity.success(vo);
+}
+```
+
+**注意**: 
+- 未标记 `@JWT` 注解的接口**不需要认证**，直接放行
+- 标记了 `@JWT` 注解的接口**必须提供有效的Token**
+- `required=false` 时，即使没有Token也会放行，但会尝试解析Token获取用户信息
+
+### 使用 @SkipJWT 注解跳过认证
+
+**使用场景**：当类上标记了 `@JWT`，但某些方法（如登录、注册）不需要认证时，可以使用 `@SkipJWT`。
+
+**优先级规则**：`@SkipJWT` > `@JWT`
+- 如果方法上同时标记了 `@JWT` 和 `@SkipJWT`，`@SkipJWT` 优先级更高
+- 如果类上标记了 `@JWT`，但方法上标记了 `@SkipJWT`，该方法不需要认证
+
+**示例1: 类上标记 @JWT，方法上标记 @SkipJWT**
+
+```java
+@JWT  // 整个Controller默认需要认证
+@RestController
+@RequestMapping("/api/v1/orders")
+public class OrderController {
+    
+    @SkipJWT("登录接口，无需认证")
+    @PostMapping("/login")
+    public HttpResponseEntity<String> login() {
+        // 该方法不需要认证（即使类上标记了 @JWT）
+    }
+    
+    @PostMapping
+    public HttpResponseEntity<OrderVO> createOrder() {
+        // 该方法需要认证（继承类上的 @JWT）
+    }
+}
+```
+
+**示例2: 明确标记跳过认证（作为文档说明）**
+
+```java
+@RestController
+@RequestMapping("/api/v1/auth")
+public class AuthController {
+    
+    @SkipJWT("登录接口，无需认证")
+    @PostMapping("/login")
+    public HttpResponseEntity<LoginVO> login(@RequestBody LoginCmd cmd) {
+        // 明确标记不需要认证，即使没有 @JWT 也会跳过
+    }
+    
+    @SkipJWT("注册接口，无需认证")
+    @PostMapping("/register")
+    public HttpResponseEntity<String> register(@RequestBody RegisterCmd cmd) {
+        // 明确标记不需要认证
+    }
+}
+```
 
 ### 获取当前登录用户
 
 在需要认证的接口中，通过 `SecurityContextHolder` 获取当前用户：
 
 ```java
+@JWT
 @GetMapping("/my-info")
 public HttpResponseEntity<UserInfoVO> getMyInfo() {
-    // 方式1: 获取完整用户对象
-    CurrentUser currentUser = SecurityContextHolder.getCurrentUser();
+    // 方式1: 获取完整用户对象（使用 var 关键字）
+    var currentUser = SecurityContextHolder.getCurrentUser();
     
     // 方式2: 只获取用户ID
-    Long userId = SecurityContextHolder.getCurrentUserId();
+    var userId = SecurityContextHolder.getCurrentUserId();
     
     // 方式3: 判断是否已登录
-    boolean isAuthenticated = SecurityContextHolder.isAuthenticated();
+    var isAuthenticated = SecurityContextHolder.isAuthenticated();
     
     // ... 业务逻辑
     return HttpResponseEntity.ok(vo);
@@ -173,51 +287,177 @@ public HttpResponseEntity<UserInfoVO> getMyInfo() {
 
 ### 生成Token
 
-在登录成功后生成Token：
+在登录成功后生成Token（使用 JDK 17 特性）：
 
 ```java
-@Autowired
-private JwtTokenProvider jwtTokenProvider;
-
-public String doLogin(String username, String password) {
-    // 1. 验证用户名密码
-    User user = userService.authenticate(username, password);
+@RequiredArgsConstructor
+public class AuthService {
     
-    // 2. 构造Token Payload（可选，放入一些基本信息）
-    Map<String, Object> payload = new HashMap<>();
-    payload.put("username", user.getUsername());
-    payload.put("realName", user.getRealName());
-    payload.put("role", user.getRole());
+    private final JwtTokenProvider jwtTokenProvider;
+    private final StringRedisTemplate redisTemplate;
+    private final ObjectMapper objectMapper;
     
-    // 3. 生成Token
-    String token = jwtTokenProvider.generateToken(user.getUserId(), payload);
-    
-    // 4. （可选）将用户信息存入Redis
-    String userKey = "boss_user:" + user.getUserId();
-    redisTemplate.opsForValue().set(userKey, JSON.toJSONString(user), 8, TimeUnit.HOURS);
-    
-    return token;
+    public String doLogin(String username, String password) {
+        // 1. 验证用户名密码
+        var user = userService.authenticate(username, password);
+        
+        // 2. 构造Token Payload（可选，放入一些基本信息）
+        var payload = Map.of(
+            "username", user.getUsername(),
+            "realName", user.getRealName(),
+            "role", user.getRole()
+        );
+        
+        // 3. 生成Token
+        var token = jwtTokenProvider.generateToken(user.getUserId(), payload);
+        
+        // 4. （可选）将用户信息存入Redis
+        var userKey = "boss_user:" + user.getUserId();
+        try {
+            var userJson = objectMapper.writeValueAsString(user);
+            redisTemplate.opsForValue().set(userKey, userJson, 8, TimeUnit.HOURS);
+        } catch (Exception e) {
+            log.warn("保存用户信息到Redis失败", e);
+        }
+        
+        return token;
+    }
 }
 ```
+
+**说明**：
+- 使用 `var` 关键字简化变量声明
+- 使用 `Map.of()` 创建不可变 Map（JDK 9+）
+- 使用 `@RequiredArgsConstructor` 进行构造器注入
 
 ### 刷新Token
 
 当Token即将过期时，可以刷新Token：
 
 ```java
+@JWT
 @PostMapping("/refresh")
 public HttpResponseEntity<String> refreshToken(@RequestHeader("Authorization") String authorization) {
-    String oldToken = authorization.replace("Bearer ", "");
+    var oldToken = authorization.replace("Bearer ", "");
     
     // 解析旧Token获取用户ID
-    Long userId = jwtTokenProvider.getUserIdFromToken(oldToken);
+    var userId = jwtTokenProvider.getUserIdFromToken(oldToken);
     
     // 生成新Token
-    String newToken = jjtTokenProvider.generateToken(userId, null);
+    var newToken = jwtTokenProvider.generateToken(userId, null);
     
     return HttpResponseEntity.ok(newToken);
 }
 ```
+
+---
+
+## 🎯 实现细节
+
+### JDK 17 特性应用
+
+#### 1. Pattern Matching for instanceof
+
+拦截器中使用模式匹配简化类型检查和转换：
+
+```java
+// 优化前
+if (!(handler instanceof HandlerMethod)) {
+    return true;
+}
+HandlerMethod handlerMethod = (HandlerMethod) handler;
+
+// 优化后（JDK 16+）
+if (!(handler instanceof HandlerMethod handlerMethod)) {
+    return true;
+}
+// handlerMethod 可直接使用，无需强制转换
+```
+
+#### 2. var 关键字
+
+简化局部变量声明，提高代码可读性：
+
+```java
+// 优化前
+String token = extractToken(request);
+Long userId = jwtTokenProvider.getUserIdFromToken(token);
+CurrentUser currentUser = loadUserFromRedis(userId, token);
+
+// 优化后
+var token = extractToken(request);
+var userId = jwtTokenProvider.getUserIdFromToken(token);
+var currentUser = loadUserFromRedis(userId, token);
+```
+
+#### 3. Optional 链式调用
+
+优化 null 处理，减少 NPE 风险：
+
+```java
+// 查找 @JWT 注解（方法优先，类次之）
+private Optional<JWT> findJwtAnnotation(HandlerMethod handlerMethod) {
+    var methodAnnotation = Optional.ofNullable(handlerMethod.getMethodAnnotation(JWT.class));
+    return methodAnnotation.or(() -> Optional.ofNullable(handlerMethod.getBeanType().getAnnotation(JWT.class)));
+}
+
+// 使用 Optional 处理 null
+Optional.ofNullable(payload)
+        .filter(p -> !p.isEmpty())
+        .ifPresent(builder::addClaims);
+```
+
+#### 4. 方法提取
+
+将复杂逻辑拆分为职责单一的小方法，提高可读性和可维护性：
+
+```java
+// 主方法简洁清晰
+public boolean preHandle(...) {
+    if (!(handler instanceof HandlerMethod handlerMethod)) {
+        return true;
+    }
+    var jwtAnnotation = findJwtAnnotation(handlerMethod);
+    if (jwtAnnotation.isEmpty()) {
+        return true;
+    }
+    var token = extractToken(request);
+    if (token.isEmpty()) {
+        return handleMissingToken(request, response, required);
+    }
+    return validateAndProcessToken(request, response, token.get(), required);
+}
+
+// 每个方法职责单一
+private Optional<JWT> findJwtAnnotation(HandlerMethod handlerMethod) { ... }
+private Optional<String> extractToken(HttpServletRequest request) { ... }
+private boolean handleMissingToken(...) { ... }
+private boolean validateAndProcessToken(...) { ... }
+```
+
+#### 5. 异常处理优化
+
+合并处理相关异常，减少重复代码：
+
+```java
+// 合并处理格式相关异常
+catch (UnsupportedJwtException | MalformedJwtException e) {
+    var message = e instanceof UnsupportedJwtException 
+        ? "不支持的 Token 格式" 
+        : "Token 格式错误";
+    throw new JwtAuthenticationException(message, e);
+}
+```
+
+### 代码质量提升
+
+| 优化项 | 说明 | 收益 |
+|--------|------|------|
+| **常量提取** | `USER_KEY_PREFIX`、`JSON_CONTENT_TYPE` | 便于维护，避免魔法字符串 |
+| **方法拆分** | 将长方法拆分为小方法 | 提高可读性，便于测试 |
+| **Optional 使用** | 统一使用 Optional 处理 null | 减少 NPE，代码更安全 |
+| **var 关键字** | 简化变量声明 | 代码更简洁 |
+| **Pattern Matching** | 简化类型检查 | 代码更优雅 |
 
 ---
 
@@ -305,14 +545,28 @@ class JwtTokenProviderTest {
     
     @Test
     void testGenerateAndParseToken() {
-        Long userId = 10001L;
-        String token = jwtTokenProvider.generateToken(userId, null);
+        var userId = 10001L;
+        var token = jwtTokenProvider.generateToken(userId, null);
         
         assertNotNull(token);
         assertTrue(jwtTokenProvider.validateToken(token));
         
-        Long parsedUserId = jwtTokenProvider.getUserIdFromToken(token);
+        var parsedUserId = jwtTokenProvider.getUserIdFromToken(token);
         assertEquals(userId, parsedUserId);
+    }
+    
+    @Test
+    void testGenerateTokenWithPayload() {
+        var userId = 10001L;
+        var payload = Map.of(
+            "username", "admin",
+            "role", "admin"
+        );
+        var token = jwtTokenProvider.generateToken(userId, payload);
+        
+        assertNotNull(token);
+        var claims = jwtTokenProvider.parseToken(token);
+        assertEquals("admin", claims.get("username"));
     }
 }
 ```
@@ -328,8 +582,33 @@ class JwtTokenProviderTest {
 
 ### Q2: 拦截器没有生效，所有接口都能访问
 
-**原因**: 拦截路径配置错误
-**解决**: 检查 `WebMvcConfig` 中的 `addPathPatterns` 配置
+**原因**: 
+1. 接口未标记 `@JWT` 注解（默认不需要认证）
+2. 接口标记了 `@SkipJWT` 注解
+3. 拦截路径配置错误
+
+**解决**: 
+- 检查接口是否标记了 `@JWT` 注解
+- 检查是否误标记了 `@SkipJWT` 注解
+- 检查 `WebMvcConfig` 中的 `addPathPatterns` 配置
+
+### Q2.1: 类上标记了 @JWT，但某个方法不需要认证怎么办？
+
+**解决**: 在该方法上标记 `@SkipJWT` 注解：
+
+```java
+@JWT
+@RestController
+@RequestMapping("/api/v1/orders")
+public class OrderController {
+    
+    @SkipJWT("公开接口，无需认证")
+    @GetMapping("/public")
+    public HttpResponseEntity<String> publicApi() {
+        // 该方法不需要认证
+    }
+}
+```
 
 ### Q3: 获取当前用户返回 null
 
@@ -376,6 +655,24 @@ public boolean preHandle(HttpServletRequest request, HttpServletResponse respons
 
 ---
 
+---
+
+## 📝 更新日志
+
+### 2025-12-25
+- ✨ 实现基于 `@JWT` 注解的认证机制
+- ✨ 新增 `@SkipJWT` 注解，支持跳过认证（优先级高于 `@JWT`）
+- 🚀 使用 JDK 17 特性优化代码
+  - Pattern Matching for instanceof
+  - var 关键字简化变量声明
+  - Optional 链式调用优化 null 处理
+  - 方法提取提高代码可读性
+- 📚 更新文档，添加 JDK 17 特性说明和使用示例
+- 🔄 将 `@SkipAuth` 重命名为 `@SkipJWT`（更明确的命名）
+
+---
+
 **最后更新**: 2025-12-25  
-**作者**: @xiangshang
+**作者**: @xiangshang  
+**JDK 版本**: 17+
 

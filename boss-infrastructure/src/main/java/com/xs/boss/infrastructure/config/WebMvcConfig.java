@@ -10,6 +10,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * Web MVC 配置
  * 配置 JWT 认证拦截器
+ * <p>
+ * 注意：拦截器采用基于注解的方式，只对标记了 @JWT 注解的接口进行认证
+ * 使用方式：在 Controller 方法或类上添加 @JWT 注解即可
  *
  * @author xiangshang
  */
@@ -22,23 +25,14 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        log.info("注册 JWT 认证拦截器");
+        log.info("注册 JWT 认证拦截器（基于 @JWT 注解）");
 
         registry.addInterceptor(jwtAuthInterceptor)
-                // 拦截所有 API 接口
+                // 拦截所有 API 接口（拦截器内部会判断是否有 @JWT 注解）
                 .addPathPatterns("/api/**")
                 
-                // 排除以下路径（不需要认证）
+                // 排除以下路径（这些路径不会被拦截器处理）
                 .excludePathPatterns(
-                        // 登录、注册等公开接口
-                        "/api/v1/auth/login",
-                        "/api/v1/auth/register",
-                        "/api/v1/auth/captcha",
-                        "/api/v1/auth/forgot-password",
-                        
-                        // 测试接口（开发环境可能需要）
-                        "/test/**",
-                        
                         // Swagger/Knife4j 文档
                         "/doc.html",
                         "/swagger-ui.html",
@@ -55,7 +49,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "/favicon.ico"
                 );
 
-        log.info("JWT 认证拦截器注册完成");
+        log.info("JWT 认证拦截器注册完成 - 使用方式：在需要认证的接口上添加 @JWT 注解");
     }
 }
 
