@@ -1,9 +1,13 @@
+plugins {
+    id 'java-library'  // 启用 api 依赖传递
+}
+
 dependencies {
     // 项目内部模块
     implementation project(':boss-domain')
 
-    // 自定义 Starter（包含 MyBatis Plus, Lombok, Swagger/Knife4j 等依赖，版本由根 build.gradle 统一管理）
-    implementation 'com.xs.xsbox:xsbox-spring-boot-starter'
+    // 自定义 Starter（使用 api 使依赖传递给上层模块，如 application）
+    api 'com.xs.xsbox:xsbox-spring-boot-starter'
     
     // Lombok annotationProcessor（annotationProcessor 配置不会传递，需要显式声明）
     annotationProcessor 'org.projectlombok:lombok'

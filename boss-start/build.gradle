@@ -8,6 +8,9 @@ dependencies {
     // 版本由根 build.gradle 的 dependencyManagement 统一管理
     implementation 'com.xs.xsbox:xsbox-spring-boot-starter'
 
+    // Vavr 函数式编程库
+    implementation 'io.vavr:vavr:0.10.4'
+
     // 开发工具
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
